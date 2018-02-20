@@ -306,20 +306,20 @@ WWPI = water_frequency + (0.75 * wet_frequency)
 permWater = np.where(water_frequency >= 80, 1, 0)
 
 # Temporary Water
-tempWater = np.where((dry_frequency <= 75) & (wet_frequency < 75) & (water_frequency < 80) & (water_frequency >= wet_frequency), 2, 0)  # & ((waterFreq > 0.25) & (waterFreq <= 0.8))
+tempWater = np.where((dry_frequency <= 80) & (wet_frequency < 65) & (water_frequency < 80) & (water_frequency >= wet_frequency), 2, 0)  # & ((waterFreq > 0.25) & (waterFreq <= 0.8))
 
 # Permanent Wet
-permWet = np.where(wet_frequency >= 75, 3, 0)
+permWet = np.where(wet_frequency >= 65, 3, 0)
 
 # temporary Wet
-tempWet = np.where((dry_frequency <= 75) & (wet_frequency < 75) & (water_frequency < 80) & (water_frequency < wet_frequency), 4, 0)  # & ((wetFreq > 0.25) & (wetFreq <= 0.75))
+tempWet = np.where((dry_frequency <= 80) & (wet_frequency < 65) & (water_frequency < 80) & (water_frequency < wet_frequency), 4, 0)  # & ((wetFreq > 0.25) & (wetFreq <= 0.75))
 
 # Dry
-noWater = np.where(dry_frequency > 75, 10, 0)
+noWater = np.where(dry_frequency > 80, 10, 0)
 
 # wetland probability
-WetHighProb = np.where((permWet > 0) | ((tempWet > 0) & (WWPI >= high_wetland_prob_thresh)), 2, 0)
-WetMedProb = np.where((tempWater > 0) | ((tempWet > 0) & ((WWPI >= low_wetland_prob_thresh) & (WWPI < high_wetland_prob_thresh))), 3, 0)
+WetHighProb = np.where((permWet > 0) | ( ((tempWater > 0 ) | (tempWet > 0)) & (WWPI >= high_wetland_prob_thresh)), 2, 0)
+WetMedProb = np.where(((tempWater > 0) | (tempWet > 0)) & ((WWPI >= low_wetland_prob_thresh) & (WWPI < high_wetland_prob_thresh)), 3, 0)
 WetLowProb = np.where((tempWet > 0) & (WWPI < low_wetland_prob_thresh), 4, 0)
 
 # New Classification: 1 - Permanent Water, 2 - Wetland (high prob), 3 - Wetland (med prob), 4 - Wetland (low prob.)
@@ -357,7 +357,10 @@ copyfile(os.path.join(qmlDir, "water_wet_frequency.qml"), outfile_name)
 
 # Load water frequency to canvas
 if not DEBUG:
-    dataobjects.load(dest, os.path.basename(dest))
+    try:
+        dataobjects.load(dest, os.path.basename(dest), isRaster=True)
+    except:
+        dataobjects.load(dest, os.path.basename(dest))
 
 # Wetness frequency
 file_name = title + "_wetness_frequency"
@@ -376,7 +379,11 @@ copyfile(os.path.join(qmlDir, "water_wet_frequency.qml"), outfile_name)
 
 # Load water frequency to canvas
 if not DEBUG:
-    dataobjects.load(dest, os.path.basename(dest))
+    try:
+        dataobjects.load(dest, os.path.basename(dest), isRaster=True)
+    except:
+        dataobjects.load(dest, os.path.basename(dest))
+
 
 # DENSE VEGETATOIN --------------------------------------------------------------------
 file_name = title + "_dveg_frequency"
@@ -440,7 +447,10 @@ copyfile(os.path.join(qmlDir, "wetland_probability.qml"), outfile_name)
 
 # Load water frequency to canvas
 if not DEBUG:
-    dataobjects.load(dest, os.path.basename(dest))
+    try:
+        dataobjects.load(dest, os.path.basename(dest), isRaster=True)
+    except:
+        dataobjects.load(dest, os.path.basename(dest))
 
 # WWPI
 file_name = title + "_WWPI"
@@ -459,7 +469,10 @@ copyfile(os.path.join(qmlDir, "WWPI.qml"), outfile_name)
 
 # Load water frequency to canvas
 if not DEBUG:
-    dataobjects.load(dest, os.path.basename(dest))
+    try:
+        dataobjects.load(dest, os.path.basename(dest), isRaster=True)
+    except:
+        dataobjects.load(dest, os.path.basename(dest))
 
 
 if not DEBUG:

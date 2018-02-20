@@ -236,5 +236,8 @@ for wm_file in watermask_files:
             sys.exit(1)
     else:
         if not DEBUG:
-            dataobjects.load(path_output_file, os.path.basename(path_output_file))
+            try:
+                dataobjects.load(path_output_file, os.path.basename(path_output_file), isRaster=True)
+            except:
+                dataobjects.load(path_output_file, os.path.basename(path_output_file))
 
