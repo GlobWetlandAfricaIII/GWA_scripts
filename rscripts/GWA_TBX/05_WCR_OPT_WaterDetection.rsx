@@ -28,25 +28,8 @@
 ##Minimum_mapping_unit = number 3
 ##Plot_water_probability= Boolean False
 ##Plot_certainty_indicator= Boolean False
+##Tile_size= number 2000 
 
-
-# -> Test parameters for execution in R
-DEBUG <- F
-start_time <- proc.time()
-
-if (DEBUG) {
-  .libPaths("C:\\Users\\ludwig\\.qgis2\\processing\\rlibs")
-  #.libPaths("C:\\Users\\ludwig\\Documents\\R\\win-library\\3.2")
-  Directory_containing_indices= "I:\\temp\\GWA_TBX_test\\indices"
-  Directory_containing_TWI= "I:\\2687_GW_A\\Toolbox\\02_InterimProducts\\TWI"
-  Output_Directory="I:\\temp\\GWA_TBX_test"
-  Minimum_water_probability = 44
-  Start_Date <- " "
-  End_Date <- " "
-  Minimum_mapping_unit = 3
-  Plot_certainty_indicator = F
-  Plot_water_probability = T
-}
 
 # LOAD LIBRARIES -------------------------------------------------------
 
@@ -55,7 +38,6 @@ library(rgdal)
 library(rpanel)
 library(stringr)
 
-#source("I:\\2687_GW_A\\04_CODE\\git_repos\\GWA_scripts\\rscripts\\GWA_TBX\\GWAutils\\R\\GWAutils.R")
 library(GWAutils)
 
 WCR_workflow(Directory_containing_indices,
@@ -66,4 +48,6 @@ WCR_workflow(Directory_containing_indices,
              End_Date,
              Minimum_mapping_unit,
              Plot_certainty_indicator,
-             Plot_water_probability)
+             Plot_water_probability,
+             Tile_size)
+             
