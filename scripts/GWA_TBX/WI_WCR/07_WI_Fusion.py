@@ -19,23 +19,27 @@ __version__ = "1.0"
 ##Wetland Inventory=group
 ##ParameterFile|path_masks_opt|Directory containing optical based water and wetness masks|True|False
 ##ParameterFile|path_water_freq_sar|SAR based water frequency|False|False
-##ParameterFile|path_wet_freq_sar|SAR based wetness frequency|False|False
+##ParameterFile|path_wet_freq_sar|SAR based wetness frequency
 ##OutputDirectory|path_output|Output directory
 ##ParameterString|start_date|Start date (YYYYMMDD) - if left empty all available scenes will be used||False|True|True
 ##ParameterString|end_date|End date (YYYYMMDD) - if left empty all available scenes will be used||False|True|True
-
+##ParameterBoolean|wetness_fusion|Perform wetness fusion|True
 
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
 DEBUG = False
 if DEBUG:
     # TEST PARAMETERS
-    path_masks_opt = r"I:\WI\02_InterimProducts\WI_test\step5_SEwa45bs55sv55dv65mu3"
-    path_water_freq_sar = r"I:\WI\02_InterimProducts\example_site\step04_SAR_filtered\M20160601_20160831_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    path_wet_freq_sar = r"I:\WI\02_InterimProducts\example_site\step04_SAR_filtered\M20160601_20160831_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    start_date = "20160601"
-    end_date = "20160901"
-    path_output = r"I:\WI\02_InterimProducts\WI_test"
+    path_masks_opt = r"C:/WI/02_Results/example_site/step5_SEwa45bs55sv55dv65mu3"
+    path_water_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
+    path_wet_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
+    #path_masks_opt = r"C:/WI/02_Results/example_site/step5_SEwa45bs55sv55dv65mu3"
+    #path_water_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
+    #path_wet_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
+    start_date = "20170201"
+    end_date = "20170301"
+    path_output = r"C:/WI/02_Results/example_site2"
+    wetness_fusion = True
 
 # IMPORTS ------------------------------------------------------------------------------
 import os, sys
@@ -80,7 +84,7 @@ if not os.path.exists(path_water_freq_sar):
                                          "file not found %s" % path_water_freq_sar)
 
 # check if water frequency file exists
-if not os.path.exists(path_wet_freq_sar):
+if not os.path.exists(path_wet_freq_sar) and wetness_fusion:
     print "Invalid input parameter: 'SAR based wetness frequency' file not found: %s" % path_wet_freq_sar
     raise GeoAlgorithmExecutionException("Invalid input parameter: 'SAR based wetness frequency' "
                                          "file not found %s" % path_wet_freq_sar)
@@ -176,24 +180,25 @@ if not proj_sar.IsSame(proj_opt) or (geotrans_opt[1] != pix_size_sar):
     path_water_freq_sar = path_water_freq_sar_reprojected
 
     # Reproject wetness frequency
-    path_wet_freq_sar_reprojected = path_wet_freq_sar[:-4] + "_reprojected.tif"
-    if not os.path.exists(path_wet_freq_sar_reprojected):
-        if not DEBUG:
-            progress.setText('Reprojecting SAR wetness frequency ...')
-        else:
-            print("Reprojecting SAR wet frequency ...")
-        cmd = ["gdalwarp", "-ot", "Byte", "-of", "GTiff", "-tr", str(geotrans_opt[1]), str(geotrans_opt[1]),
-               "-overwrite", "-co", "COMPRESS=LZW", "-s_srs", proj_sar.ExportToProj4(), "-t_srs", proj_opt.ExportToProj4(),
-               path_wet_freq_sar, path_wet_freq_sar_reprojected]
-        try:
-            subprocess.check_call(cmd, shell=True)
-        except subprocess.CalledProcessError as e:
+    if wetness_fusion:
+        path_wet_freq_sar_reprojected = path_wet_freq_sar[:-4] + "_reprojected.tif"
+        if not os.path.exists(path_wet_freq_sar_reprojected):
             if not DEBUG:
-                raise GeoAlgorithmExecutionException("Error: SAR wetness frequency could not be reprojected. \n %s " % e)
+                progress.setText('Reprojecting SAR wetness frequency ...')
+            else:
+                print("Reprojecting SAR wet frequency ...")
+            cmd = ["gdalwarp", "-ot", "Byte", "-of", "GTiff", "-tr", str(geotrans_opt[1]), str(geotrans_opt[1]),
+                   "-overwrite", "-co", "COMPRESS=LZW", "-s_srs", proj_sar.ExportToProj4(), "-t_srs", proj_opt.ExportToProj4(),
+                   path_wet_freq_sar, path_wet_freq_sar_reprojected]
+            try:
+                subprocess.check_call(cmd, shell=True)
+            except subprocess.CalledProcessError as e:
+                if not DEBUG:
+                    raise GeoAlgorithmExecutionException("Error: SAR wetness frequency could not be reprojected. \n %s " % e)
 
-    path_wet_freq_sar = path_wet_freq_sar_reprojected
+        path_wet_freq_sar = path_wet_freq_sar_reprojected
 
-    del proj_sar, proj_opt
+        del proj_sar, proj_opt
 
 # Extent of AOI
 opt_watermask_files = [os.path.join(path_masks_opt, f) for f in watermask_files]
@@ -206,7 +211,8 @@ if extent_AOI is None:
         sys.exit(1)
 
 # Read SAR wetness frequency as nparray
-wet_freq_sar = rsu.raster2array(path_wet_freq_sar, AOI_extent=extent_AOI)[0]
+if wetness_fusion:
+    wet_freq_sar = rsu.raster2array(path_wet_freq_sar, AOI_extent=extent_AOI)[0]
 
 # Read SAR water frequency as nparray
 water_freq_sar = rsu.raster2array(path_water_freq_sar, AOI_extent=extent_AOI)[0]
@@ -255,79 +261,74 @@ for wm_file in watermask_files:
             sys.exit(1)
     else:
         if not DEBUG:
-            try:
-                dataobjects.load(path_output_file, os.path.basename(path_output_file), isRaster=True)
-            except:
-                dataobjects.load(path_output_file, os.path.basename(path_output_file))
+            dataobjects.load(path_output_file, os.path.basename(path_output_file))
 
+    if wetness_fusion:
 
-    # Dense vegetation wetness mask
-    wet_files_soil = [os.path.join(path_masks_opt, f) for f in
-                      fnmatch.filter(os.listdir(path_masks_opt), "*_d" + wm_file[idx_date:idx_date + 8] + "*_soil_mask.tif")]
+        # Dense vegetation wetness mask
+        wet_files_soil = [os.path.join(path_masks_opt, f) for f in
+                          fnmatch.filter(os.listdir(path_masks_opt), "*_d" + wm_file[idx_date:idx_date + 8] + "*_soil_mask.tif")]
 
-    # Dense vegetation wetness mask
-    wet_files_sveg = [os.path.join(path_masks_opt, f) for f in
-                  fnmatch.filter(os.listdir(path_masks_opt), "*_d" + wm_file[idx_date:idx_date + 8] + "*_sveg_mask.tif")]
+        # Dense vegetation wetness mask
+        wet_files_sveg = [os.path.join(path_masks_opt, f) for f in
+                      fnmatch.filter(os.listdir(path_masks_opt), "*_d" + wm_file[idx_date:idx_date + 8] + "*_sveg_mask.tif")]
 
-    if wet_files_soil:
+        if wet_files_soil:
 
-        if not DEBUG:
-            progress.setText("Fusing wetness mask %s" % wet_files_soil[0])
-
-        # Wetness mask
-        if len(wet_files_soil) != 0:
-            wet_mask_soil, geotrans_wet = rsu.raster2array(wet_files_soil[0], extent_AOI)[:2]
-        else:
-            wet_mask_soil = np.zeros(shape=fused_watermask.shape)
-
-        if len(wet_files_sveg) != 0:
-            wet_mask_sveg, geotrans_wet = rsu.raster2array(wet_files_sveg[0], extent_AOI)[:2]
-        else:
-            wet_mask_sveg = np.zeros(shape=fused_watermask.shape)
-
-        # Fuse wetness masks by taking the maximum value
-        wet_mask_opt = np.nanmax(np.array([wet_mask_soil, wet_mask_sveg]), axis=0)
-
-        # Binary mask of weighted wetmask
-        wet_mask_binary = np.where((wet_mask_soil >= 0.75) | (wet_mask_sveg >= 0.75), 1, 0)
-        wet_mask_binary = np.where((watermask_opt >= 0.75) | np.isnan(wet_mask_opt), np.nan, wet_mask_binary)
-
-        # Mask sar water frequency by optical potential water mask
-        #wet_freq_sar_masked = np.where(wet_mask_binary == 1, wet_freq_sar, np.nan)
-
-        #plt.hist(wet_freq_sar_masked.ravel(), bins=np.asarray(range(0,100,5)), range=(0, 100))
-        # Get threshold for SAR wet mask
-        wet_sar_threshold = np.nanpercentile(wet_freq_sar, 90)
-
-        # Create sar water mask
-        wet_mask_sar = np.where(wet_freq_sar >= wet_sar_threshold, 1, 0)
-        wet_freq_sar_water = np.where(wet_mask_sar == 1, wet_freq_sar, np.nan)
-
-        # Rescale areas that are wet according to SAR wetness frequency from 0.75 to 1
-        wet_freq_sar_water_scaled = rsu.rescale(wet_freq_sar_water)
-
-        # Fuse optical and sar water masks
-        wet_mask_fused = np.nanmax(np.array([wet_freq_sar_water_scaled, wet_mask_opt]), axis=0)
-
-        # mask sar water frequency by optical potential water mask
-        #wet_freq_sar_masked = np.where(wet_mask_binary == 1, wet_freq_sar, np.nan)
-
-        # Set pixels that are classified as water to 0
-        wet_mask_fused = np.where(fused_watermask >= 0.75, 0, wet_mask_fused)
-
-        # Write to file
-        path_output_file = os.path.join(path_output_masks, os.path.basename(wet_files_soil[0])[:-4] + "_sar.tif")
-        res = rsu.array2raster(wet_mask_fused, geotrans, proj, path_output_file, gdal.GDT_Float32, 255)
-
-        if res != True:
             if not DEBUG:
-                raise GeoAlgorithmExecutionException(res)
+                progress.setText("Fusing wetness mask %s" % wet_files_soil[0])
+
+            # Wetness mask
+            if len(wet_files_soil) != 0:
+                wet_mask_soil, geotrans_wet = rsu.raster2array(wet_files_soil[0], extent_AOI)[:2]
             else:
-                print(res)
-                sys.exit(1)
-        else:
-            if not DEBUG:
-                try:
-                    dataobjects.load(path_output_file, os.path.basename(path_output_file), isRaster=True)
-                except:
+                wet_mask_soil = np.zeros(shape=fused_watermask.shape)
+
+            if len(wet_files_sveg) != 0:
+                wet_mask_sveg, geotrans_wet = rsu.raster2array(wet_files_sveg[0], extent_AOI)[:2]
+            else:
+                wet_mask_sveg = np.zeros(shape=fused_watermask.shape)
+
+            # Fuse wetness masks by taking the maximum value
+            wet_mask_opt = np.nanmax(np.array([wet_mask_soil, wet_mask_sveg]), axis=0)
+
+            # Binary mask of weighted wetmask
+            wet_mask_binary = np.where((wet_mask_soil >= 0.75) | (wet_mask_sveg >= 0.75), 1, 0)
+            wet_mask_binary = np.where((watermask_opt >= 0.75) | np.isnan(wet_mask_opt), np.nan, wet_mask_binary)
+
+            # Mask sar water frequency by optical potential water mask
+            #wet_freq_sar_masked = np.where(wet_mask_binary == 1, wet_freq_sar, np.nan)
+
+            #plt.hist(wet_freq_sar_masked.ravel(), bins=np.asarray(range(0,100,5)), range=(0, 100))
+            # Get threshold for SAR wet mask
+            wet_sar_threshold = np.nanpercentile(wet_freq_sar, 90)
+
+            # Create sar water mask
+            wet_mask_sar = np.where(wet_freq_sar >= wet_sar_threshold, 1, 0)
+            wet_freq_sar_water = np.where(wet_mask_sar == 1, wet_freq_sar, np.nan)
+
+            # Rescale areas that are wet according to SAR wetness frequency from 0.75 to 1
+            wet_freq_sar_water_scaled = rsu.rescale(wet_freq_sar_water)
+
+            # Fuse optical and sar water masks
+            wet_mask_fused = np.nanmax(np.array([wet_freq_sar_water_scaled, wet_mask_opt]), axis=0)
+
+            # mask sar water frequency by optical potential water mask
+            #wet_freq_sar_masked = np.where(wet_mask_binary == 1, wet_freq_sar, np.nan)
+
+            # Set pixels that are classified as water to 0
+            wet_mask_fused = np.where(fused_watermask >= 0.75, 0, wet_mask_fused)
+
+            # Write to file
+            path_output_file = os.path.join(path_output_masks, os.path.basename(wet_files_soil[0])[:-4] + "_sar.tif")
+            res = rsu.array2raster(wet_mask_fused, geotrans, proj, path_output_file, gdal.GDT_Float32, 255)
+
+            if res != True:
+                if not DEBUG:
+                    raise GeoAlgorithmExecutionException(res)
+                else:
+                    print(res)
+                    sys.exit(1)
+            else:
+                if not DEBUG:
                     dataobjects.load(path_output_file, os.path.basename(path_output_file))
