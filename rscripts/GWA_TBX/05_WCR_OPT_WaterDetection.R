@@ -32,7 +32,7 @@
 
 
 # -> Test parameters for execution in R
-DEBUG <- T
+DEBUG <- F
 start_time <- proc.time()
 
 if (DEBUG) {
