@@ -78,10 +78,10 @@ if not os.path.exists(outDirFiltered):
 SARfiles = []
 for root, dirs, files in os.walk(inDir):
     if water:
-        SARfiles += [os.path.join(root, f) for f in fnmatch.filter(files, "M*SFRQWATER*")]
+        SARfiles += [os.path.join(root, f) for f in fnmatch.filter(files, "*SFRQWATER*")]
 
     if wetness:
-        SARfiles += [os.path.join(root, f) for f in fnmatch.filter(files, "M*SFRQWET*")]
+        SARfiles += [os.path.join(root, f) for f in fnmatch.filter(files, "*SFRQWET*")]
 
 if len(SARfiles) == 0:
     if not debug:

@@ -26,7 +26,7 @@ __version__ = "1.0"
 ##*ParameterString|tile_ID|Tile ID (Sentinel-2) or Path/Row (Landsat)||False|True|False
 ##*ParameterString|start_date|Start date (YYYYMMDD) - if left empty all available scenes will be used||False|True|True
 ##*ParameterString|end_date|End date (YYYYMMDD) - if left empty all available scenes will be used||False|True|True
-##*ParameterSelection|calculate_wetness_indices|Spectral indices for ... |Wetland Inventory;Water Cycle Regime|Wetland Inventory
+##*ParameterSelection|calculate_wetness_indices|Spectral indices for ... |Wetland Inventory;Inundation Regime|Wetland Inventory
 
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
