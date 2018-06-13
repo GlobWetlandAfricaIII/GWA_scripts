@@ -24,11 +24,11 @@
 ##Output_Directory=folder
 ##Start_Date= optional string
 ##End_Date= optional string
-##Minimum_water_probability=number 45
-##Minimum_mapping_unit = number 3
-##Plot_water_probability= Boolean False
-##Plot_certainty_indicator= Boolean False
-##Tile_size= number 2000 
+##*Minimum_water_probability=number 45
+##*Minimum_mapping_unit = number 3
+##*Plot_water_probability= Boolean False
+##*Plot_certainty_indicator= Boolean False
+##*Tile_size= number 2000 
 
 
 # -> Test parameters for execution in R

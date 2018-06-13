@@ -20,7 +20,7 @@ __version__ = "1.0"
 ##ParameterFile|path_imagery|Directory containing imagery|True|False
 ##ParameterSelection|sensor|Sensor|Sentinel-2;Landsat 5/7/8|Sentinel-2
 ##ParameterSelection|AOI_type|Type of AOI|Shapefile;User defined extent;Joint extent of all scenes
-##ParameterFile|path_AOI|Shapefile containing AOI (Area of Interest)
+##ParameterFile|path_AOexitI|Shapefile containing AOI (Area of Interest)
 ##ParameterExtent|extent_coordinates|User defined extent||True
 ##OutputDirectory|path_output|Output directory
 ##*ParameterString|tile_ID|Tile ID (Sentinel-2) or Path/Row (Landsat)||False|True|False
@@ -60,6 +60,8 @@ if not DEBUG:
     import qgis
 
 # Load additional library (rsutils)
+if DEBUG:
+    sys.path.append(r"C:\Users\dulleck.GEOVILLE\git\rsutils")
 import RSutils.RSutils as rsu
 
 # FUNCTIONS ------------------------------------------------------------------------------------

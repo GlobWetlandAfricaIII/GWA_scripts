@@ -32,7 +32,7 @@
 ##Plot_probability= Boolean False
 ##Plot_certainty_indicator= Boolean False
 
-DEBUG <- T
+DEBUG <- F
 
 # -> Test parameters for execution in R
 if (DEBUG) {
