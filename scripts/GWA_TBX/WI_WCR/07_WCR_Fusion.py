@@ -27,14 +27,6 @@ __version__ = "1.0"
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
 DEBUG = False
-if DEBUG:
-    # TEST PARAMETERS
-    path_watermasks_opt = r"I:\temp\GWA_TBX_137\SE_wa50bs55sv55dv65mu3"
-    #path_watermask_opt_max = r"I:\temp\GWA_TBX_test\SE_wat48_win1800_mmu3\maximum_climatologic_water_extent.tif"
-    path_watermask_sar = r"T:\TMP\CHL\98_S1\watermasks\i3lmto_watermask.tif"
-    start_date = ""
-    end_date = ""
-    path_output = r"I:\temp\GWA_TBX_137"
 
 # IMPORTS ------------------------------------------------------------------------------
 import os, sys

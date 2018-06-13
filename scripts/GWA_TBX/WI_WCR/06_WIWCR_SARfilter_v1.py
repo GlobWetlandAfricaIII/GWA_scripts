@@ -23,12 +23,6 @@ __version__ = "1.0"
 debug = False
 
 
-# -> Test Parameteres
-if debug:
-    inDir = r""
-    path_output = r""
-    water = True
-    wetness = False
 
 from osgeo import gdal
 import os

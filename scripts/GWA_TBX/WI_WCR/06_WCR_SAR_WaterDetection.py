@@ -23,13 +23,6 @@
 
 debug = False
 
-# test paths
-if debug:
-    path_imagery = ""
-    pathOUT = ""
-    path_AOI = ""
-    startDate = '20170701'
-    endDate = '20170731'
 
 # IMPORTS ----------------------------------------------------------------------------------------------
 

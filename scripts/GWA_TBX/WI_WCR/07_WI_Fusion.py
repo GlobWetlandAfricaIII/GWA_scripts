@@ -28,14 +28,6 @@ __version__ = "1.0"
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
 DEBUG = False
-if DEBUG:
-    # TEST PARAMETERS
-    path_masks_opt = r"I:\WI\02_InterimProducts\WI_test\step5_SEwa45bs55sv55dv65mu3"
-    path_water_freq_sar = r"I:\WI\02_InterimProducts\example_site\step04_SAR_filtered\M20160601_20160831_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    path_wet_freq_sar = r"I:\WI\02_InterimProducts\example_site\step04_SAR_filtered\M20160601_20160831_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    start_date = "20160601"
-    end_date = "20160901"
-    path_output = r"I:\WI\02_InterimProducts\WI_test"
 
 # IMPORTS ------------------------------------------------------------------------------
 import os, sys
