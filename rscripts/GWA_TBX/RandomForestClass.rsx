@@ -2,12 +2,12 @@
 ##Data_to_be_Classified=raster
 ##Training_Data=vector
 ##Class_ID_Field=string
-##Mask_Raster=file
+##Mask_Raster=optional raster
+##Output_Raster=output raster
 
+# Advanced parameters
 ##Number_of_Cores_for_Processing=advanced number 2
 ##Number_of_Trees=advanced number 150
-
-##Output_Raster=output raster
 
 # TODO: make sure that the training date crs matches the raster crs. project training data if necessary.
 
