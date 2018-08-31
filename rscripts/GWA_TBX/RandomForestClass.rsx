@@ -18,7 +18,7 @@ tryCatch(find.package("maptools"), error=function(e) install.packages("maptools"
 tryCatch(find.package("randomForest"), error=function(e) install.packages("randomForest", lib=file.path(.Library[1])))
 tryCatch(find.package("snow"), error=function(e) install.packages("snow", lib=file.path(.Library[1])))
 tryCatch(find.package("snowfall"), error=function(e) install.packages("snowfall", lib=file.path(.Library[1])))
-tryCatch(find.package("tcltk2"), error=function(e) install.packages("tcltk", lib=file.path(.Library[1])))
+tryCatch(find.package("rpanel"), error=function(e) install.packages("tcltk", lib=file.path(.Library[1])))
 
 
 # load all libraries used
@@ -27,7 +27,6 @@ library(randomForest)
 library(snow)
 library(snowfall)
 library(rpanel)
-library(tcltk2)
 
 # Define raster options
 rasterOptions(datatype = 'INT2S', progress = 'window', timer = T, chunksize = 1e+07, maxmemory = 1e+08, tmptime = 24)
@@ -37,9 +36,7 @@ img <- stack(Data_to_be_Classified)
 
 # first make sure that the class ID field is not a factor, and change it to numeric if it is
 if (class(eval(parse(text = paste('Training_Data@data$', Class_ID_Field, sep = '')))) == 'factor'){
-
 eval(parse(text = paste0('Training_Data@data$', Class_ID_Field, '<- as.numeric(as.character(Training_Data@data$', Class_ID_Field, '))')))
-
 }
 
 # extract training data in parallel using snowfall
