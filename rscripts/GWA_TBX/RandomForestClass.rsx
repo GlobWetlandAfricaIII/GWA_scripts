@@ -10,7 +10,8 @@
 ##Number_of_Trees=advanced number 150
 
 # TODO: make sure that the training date crs matches the raster crs. project training data if necessary.
-
+# TODO: remove any NA values in training data. Give warning if some training data is outside extent.
+# TODO: if classification returns only NA - make warning that mask needs to have NA values defined.
 
 # Check for packages required, and if they are not installed, instal them.
 tryCatch(find.package("maptools"), error=function(e) install.packages("maptools", lib=file.path(.Library[1])))
@@ -100,10 +101,9 @@ gc()
 
 
 # mask the resulting classification
-if (Mask_Raster != ''){
+if (exists('Mask_Raster')){
 pb <- tkProgressBar("Random Forest Progress", "Applying Mangrove Mask", 0, 100, 50)
-msk <- raster(Mask_Raster)
-map_rf <- mask(map_rf, msk, progress='window')
+map_rf <- mask(map_rf, Mask_Raster, progress='window')
 close(pb)
 }
 
