@@ -26,6 +26,7 @@ library(maptools)
 library(randomForest)
 library(snow)
 library(snowfall)
+library(rpanel)
 library(tcltk2)
 
 # Define raster options
@@ -42,7 +43,8 @@ eval(parse(text = paste0('Training_Data@data$', Class_ID_Field, '<- as.numeric(a
 }
 
 # extract training data in parallel using snowfall
-pb <- tkProgressBar("Random Forest Progress", "Extracting Training Data", 0, 100, 50)
+panel <- rp.control(title = "Progess Message. . .", size = c(500, 50))
+rp.text(panel, "Extracting training data from imagery. . .", font="Arial", pos = c(10, 10), title = 'bottom', name = 'prog_panel')
 
 # First, if the training data are vector polygons they must be coverted to points
 # to speed things up
@@ -58,7 +60,6 @@ names(Training_Data_P@data) <- Class_ID_Field
 crs(Training_Data_P) <- crs(img[[1]])
 }
 
-
 # extract the training data using snowflake
 imgl <- unstack(img)
 sfInit(parallel=TRUE, cpus = Number_of_Cores_for_Processing)
@@ -73,27 +74,23 @@ sfStop()
 data <- data.frame(data)
 names(data) <- names(img)
 
-
 # add the classification ID to the model training data
 if (class(Training_Data)[1] == 'SpatialPolygonsDataFrame'){
 data$LUC <- as.vector(eval(parse(text = paste('Training_Data_P@data$', Class_ID_Field, sep = ''))))
 } else {
 data$LUC <- as.vector(eval(parse(text = paste('Training_Data@data$', Class_ID_Field, sep = ''))))
 }
-close(pb)
-
-
+rp.control.dispose(panel)
 
 # run random forest classifier
-pb <- tkProgressBar("Random Forest Progress", "Training Random Forest Model", 0, 100, 50)
 RandomForestModel <- randomForest(data[,1:(ncol(data)-1)], as.factor(data$LUC), ntree = Number_of_Trees, importance = T, scale = F)
-close(pb)
-
 
 # get out-of-bag error
 OOBE <- as.data.frame(RandomForestModel[[5]])
 
 # Classify the image
+panel <- rp.control(title = "Progess Message. . .", size = c(500, 50))
+rp.text(panel, "Classifying the imagery. . .", font="Arial", pos = c(10, 10), title = 'bottom', name = 'prog_panel')
 beginCluster(Number_of_Cores_for_Processing)
 map_rf <- clusterR(img, raster::predict, args = list(model = RandomForestModel, na.rm = TRUE))
 endCluster()
@@ -101,10 +98,11 @@ gc()
 
 
 # mask the resulting classification
-if (exists('Mask_Raster')){
-pb <- tkProgressBar("Random Forest Progress", "Applying Mangrove Mask", 0, 100, 50)
+if (!is.null(Mask_Raster)){
+panel <- rp.control(title = "Progess Message. . .", size = c(500, 50))
+rp.text(panel, "Applying mask. . .", font="Arial", pos = c(10, 10), title = 'bottom', name = 'prog_panel')
 map_rf <- mask(map_rf, Mask_Raster, progress='window')
-close(pb)
+rp.control.dispose(panel)
 }
 
 Output_Raster <- map_rf
