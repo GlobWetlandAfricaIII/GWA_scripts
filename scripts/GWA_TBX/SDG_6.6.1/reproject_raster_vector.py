@@ -14,7 +14,7 @@
 # Run GDAL warp to reproject raster layer
 progress.setText("Reprojecting raster...")
 params = {'INPUT': inputRaster, 'DEST_SRS': projection, 'METHOD': 0,  
-                 'OUTPUT': outputRaster}
+                 'RTYPE': 1, 'OUTPUT': outputRaster}
 processing.runalg("gdalogr:warpreproject", params)
 
 # Run ReprojectLayer to reproject vector layer
