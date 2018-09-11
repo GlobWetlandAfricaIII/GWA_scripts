@@ -67,7 +67,8 @@ for text_file in report_files:
                 match = re.match("\|\s*(\d+)\|\s+\|\s*([\d\.,]+)\|", line)
                 if match:
                     processing_region = True
-                    region_stats = {}
+                    region_stats = {landcover: "0.0" for landcover in  
+                                                [rc["label"] for rc in list(raster_classes.values())]}
                     region_stats["yyyy"] = period
                     region = match.group(1)
                     region_stats["regionId"] = region
@@ -102,8 +103,14 @@ for region_stats in values_as_km2:
     for lc in region_stats.keys():
         if lc in ["yyyy", "regionId"]:
             continue
-        change = ((float(reference_stats[regionId][lc]) - float(region_stats[lc])) /
-                  float(reference_stats[regionId][lc])) * 100.0
+        try:   
+            change = ((float(reference_stats[regionId][lc]) - float(region_stats[lc])) /
+                    float(reference_stats[regionId][lc])) * 100.0
+        except ZeroDivisionError:
+            if float(region_stats[lc]) == 0:
+                change = 0.0
+            else:
+                change = -100.0
         change_stats[lc] = str(change)
     values_as_percentchange.append(change_stats)
 
