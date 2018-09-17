@@ -679,11 +679,13 @@ def processing(tempdir, Output_folder, input_files_list, snap_path, gpt_script, 
     for n in range(0, len(input_files_list)):
         inputfile = input_files_list[n]
         filename = inputfile.split("/")[len(inputfile.split("/")) - 1]
+        ext = filename.split(".", 1)[1]
+        ext_len = len(ext) + 1
         cmnd = '"' + snap_path + '/bin/gpt.exe" "' + gpt_script + '"' + ' -p "' + paramfile + '" ' + ' -PsourceFile="' + inputfile + '" -PtargetbasePath="' + Output_folder + filename[:-5] + '"'
         progress.setText('"' + snap_path + '/bin/gpt.exe"' ) 
         progress.setText('"' + gpt_script + '"' + ' -p "' + paramfile + '" ')
         progress.setText(' -PsourceFile="' + inputfile + '" ')
-        progress.setText('-PtargetbasePath="' + Output_folder + filename[:-5] + '" -e')
+        progress.setText('-PtargetbasePath="' + Output_folder + filename[:-ext_len] + '" -e')
         si = subprocess.STARTUPINFO()
         si.dwFlags |= subprocess._subprocess.STARTF_USESHOWWINDOW
         process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
