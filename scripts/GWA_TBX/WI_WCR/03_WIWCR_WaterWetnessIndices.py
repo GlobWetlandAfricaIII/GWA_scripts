@@ -31,6 +31,20 @@ __version__ = "1.0"
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
 DEBUG = False
+if DEBUG:
+    # TEST PARAMETERS
+    path_output = r"I:\temp\GWA_TBX_137"
+    path_imagery = r"T:\Processing\2687_GW_A\03_Products\GWA-TOOLBOX\01_RawData\Imagery\WI\zipped"
+    path_AOI = r"T:\Processing\2687_GW_A\03_Products\GWA-TOOLBOX\01_RawData\AOIs\Wetland.shp"
+    sensor = 0
+    tile_ID = ""
+    calculate_wetness_indices = True
+    #extent_coordinates = "-1851429.54238,-1831170.14094,1554149.79985,1571383.44653"
+    extent_coordinates = "-1978074.16201,-1799778.22285,1551989.49873,1559809.49606"
+    proj_canvas_wkt = 'PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs"],AUTHORITY["EPSG","3857"]]'
+    start_date = ""
+    end_date = ""
+    AOI_type = 0
 
 # IMPORTS ------------------------------------------------------------------------------
 import os, sys
@@ -46,8 +60,6 @@ if not DEBUG:
     import qgis
 
 # Load additional library (rsutils)
-if DEBUG:
-    sys.path.append(r"")
 import RSutils.RSutils as rsu
 
 # FUNCTIONS ------------------------------------------------------------------------------------
@@ -305,7 +317,8 @@ if not os.path.exists(path_indices):
 if sensor == "Sentinel":
 
     # Search for scene directories
-    scene_dirs = rsu.search_scene_directories(path_imagery, "S2[AB]*")
+    #scene_dirs = rsu.search_scene_directories(path_imagery, "S2[AB]*")
+    scene_dirs = [path_imagery]
     scene_dirs_IDs = [] # list with (scene path, scene ID) tuples
 
     # Extract scene ID from metadata file
@@ -346,7 +359,8 @@ if sensor == "Sentinel":
 
 else:
     # Search Landsat scene directories
-    scene_dirs = rsu.search_scene_directories(path_imagery, "L[COTE]*")
+    #scene_dirs = rsu.search_scene_directories(path_imagery, "L[COTE]*")
+    scene_dirs = [path_imagery]
     scene_dirs_IDs = [[sD, None] for sD in scene_dirs]
 
 # Update progress bar
