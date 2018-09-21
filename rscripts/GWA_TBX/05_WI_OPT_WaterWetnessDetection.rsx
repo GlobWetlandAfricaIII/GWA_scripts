@@ -7,7 +7,7 @@
 #
 #
 # Date created: 06.05.2017
-# Date last modified: 09.06.2017
+# Date last modified: 04.09.2018
 #
 #
 # __author__ = "Christina Ludwig"
@@ -32,34 +32,12 @@
 ##Plot_probability= Boolean False
 ##Plot_certainty_indicator= Boolean False
 
-DEBUG <- F
-
-# -> Test parameters for execution in R
-if (DEBUG) {
-  #Directory_containing_indices= "T:\\Processing\\2687_GW_A\\03_Products\\GWA-TOOLBOX\\02_InterimProducts\\WI\\indices"
-  Directory_containing_indices= "I:\\temp\\GWA_TBX_137\\indices"
-  Directory_containing_TWI= "T:\\Processing\\2687_GW_A\\03_Products\\GWA-TOOLBOX\\workshop_June2017\\Trainingkits_UCD\\WI\\WI\\02_InterimProducts\\example_site\\step05_TWI"
-  Output_Directory="I:\\temp\\GWA_TBX_137_2"
-  Minimum_water_probability = 50
-  Minimum_wetness_probability_bare_soil = 55
-  Minimum_wetness_probability_sparse_vegetation = 55
-  Minimum_wetness_probability_dense_vegetation = 65
-  Start_Date <- "20170101"
-  End_Date <- "20170301"
-  Minimum_mapping_unit = 3
-  Plot_certainty_indicator = F
-  Plot_probability <- T
-  .libPaths("C:\\Users\\ludwig\\.qgis2\\processing\\rlibs")
-}
-
 
 # Load libraries ----------------------------------------------------------
 library(raster)
 library(rgdal)
 library(rpanel)
 library(stringr)
-
-#source("I:\\2687_GW_A\\04_CODE\\git_repos\\GWA_scripts\\rscripts\\GWA_TBX\\GWAutils\\R\\GWAutils.R")
 library(GWAutils)
 
 WI_workflow(Directory_containing_indices,

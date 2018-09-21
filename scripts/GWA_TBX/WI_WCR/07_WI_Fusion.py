@@ -28,18 +28,7 @@ __version__ = "1.0"
 # DEBUGGING PARAMETERS ------------------------------------------------------
 # For debugging outside of QGIS set this flag to True
 DEBUG = False
-if DEBUG:
-    # TEST PARAMETERS
-    path_masks_opt = r"C:/WI/02_Results/example_site/step5_SEwa45bs55sv55dv65mu3"
-    path_water_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    path_wet_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    #path_masks_opt = r"C:/WI/02_Results/example_site/step5_SEwa45bs55sv55dv65mu3"
-    #path_water_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWATER_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    #path_wet_freq_sar = r"C:\WI\02_Results\example_site2\SAR_filtered\M99991201_99990228_SFRQWET--_S1AIWGRDH1VV-_---_B0201_AF010M_E043N091T1_filtered.tif"
-    start_date = "20170201"
-    end_date = "20170301"
-    path_output = r"C:/WI/02_Results/example_site2"
-    wetness_fusion = True
+
 
 # IMPORTS ------------------------------------------------------------------------------
 import os, sys

@@ -24,17 +24,7 @@ __version__ = "1.0"
 
 DEBUG = False
 
-# test paths
-if DEBUG:
-    #path_watermasks = r"I:\temp\GWA_TBX_SE\SE_wat45_mmu3\fused_watermasks"
-    path_watermasks = r"I:\WI\02_InterimProducts\WI_test\step5_SEwa45bs55sv55dv65mu3"
-    #path_output = r"I:\temp\GWA_TBX_SE\SE_wat45_mmu3\fused_watermasks"
-    path_output = r"I:\WI\02_InterimProducts\WI_test"
-    start_date = ""
-    end_date = ""
-    max_extent_thresh = 10
-    min_extent_thresh = 80
-    here = ""
+
 
 import os, sys
 import numpy as np

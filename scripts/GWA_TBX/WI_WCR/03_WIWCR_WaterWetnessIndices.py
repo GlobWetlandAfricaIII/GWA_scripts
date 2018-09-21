@@ -317,7 +317,8 @@ if not os.path.exists(path_indices):
 if sensor == "Sentinel":
 
     # Search for scene directories
-    scene_dirs = rsu.search_scene_directories(path_imagery, "S2[AB]*")
+    #scene_dirs = rsu.search_scene_directories(path_imagery, "S2[AB]*")
+    scene_dirs = [path_imagery]
     scene_dirs_IDs = [] # list with (scene path, scene ID) tuples
 
     # Extract scene ID from metadata file
@@ -358,7 +359,8 @@ if sensor == "Sentinel":
 
 else:
     # Search Landsat scene directories
-    scene_dirs = rsu.search_scene_directories(path_imagery, "L[COTE]*")
+    #scene_dirs = rsu.search_scene_directories(path_imagery, "L[COTE]*")
+    scene_dirs = [path_imagery]
     scene_dirs_IDs = [[sD, None] for sD in scene_dirs]
 
 # Update progress bar

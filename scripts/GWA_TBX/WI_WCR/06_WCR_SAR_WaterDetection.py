@@ -23,13 +23,6 @@
 
 debug = False
 
-# test paths
-if debug:
-    path_imagery = ""
-    pathOUT = ""
-    path_AOI = ""
-    startDate = '20170201'
-    endDate = '20170301'
 
 # IMPORTS ----------------------------------------------------------------------------------------------
 
@@ -138,7 +131,7 @@ def createFootprintShp(path_S1_Zip, path_tmp_files):
     coords_list = coords_sep.split(",")
 
     coords_ring = [(coords_list[0], coords_list[1]), (coords_list[2], coords_list[3]), (coords_list[4], coords_list[5]),
-                   (coords_list[6], coords_list[7])]
+                   (coords_list[6], coords_list[7]), (coords_list[0], coords_list[1])]
 
     ring = ogr.Geometry(ogr.wkbLinearRing)
     for coord in coords_ring:
@@ -154,7 +147,7 @@ def createFootprintShp(path_S1_Zip, path_tmp_files):
 
 def getIntersectWKT(path_aoi, path_footprint):
     driver = ogr.GetDriverByName('ESRI Shapefile')
-    ds_aoi = driver.Open(path_aoi)
+    ds_aoi = driver.Open(path_aoi,0)
     layer_aoi = ds_aoi.GetLayer()
     feature_aoi = layer_aoi.GetFeature(0)
     vectorGeometry_aoi = feature_aoi.GetGeometryRef()
@@ -162,7 +155,7 @@ def getIntersectWKT(path_aoi, path_footprint):
     ds_fp = driver.Open(path_footprint, 0)
     layer_fp = ds_fp.GetLayer()
     feature_fp = layer_fp.GetFeature(0)
-    vectorGeometry_fp = feature_aoi.GetGeometryRef()
+    vectorGeometry_fp = feature_fp.GetGeometryRef()
 
     intersection = vectorGeometry_aoi.Intersection(vectorGeometry_fp)
     (minX, maxX, minY, maxY) = intersection.GetEnvelope()
@@ -371,13 +364,6 @@ progress.setText('Compute watermask')
 # Compute watermasks
 # call compiled version of s1_waterdetection.py (input args: path_tmp_files, path_AOI, pathOUT)
 
-
-debug = False
-
-if debug:
-    path_tmp_files = r"F:\GWA_SAR_data\site63"
-    path_aoi = 'T:/Processing/2687_GW_A/01_RawData/Ancillary_Data/AOIs/site_specific/AOI_63.shp'
-    pathOUT = r"F:\GWA_SAR_data\site63"
 
 
 paths_TC_tiffs_db = [w for x in os.walk(path_tmp_files) for w in glob(os.path.join(x[0], '*_VV.tif'))]
