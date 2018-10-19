@@ -15,7 +15,7 @@ __version__ = "1.0"
 
 # GUI for QGIS ---------------------------------------------------------------
 
-##FMask for Sentinel 2=name
+##Mask for Sentinel 2 for Wetland Inventory=name
 ##Wetland Inventory=group
 ##ParameterFile|granuledir|Image Directory (For images including subimages use target granule directory)|True|False
 ##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
