@@ -111,7 +111,7 @@ for region_stats in values_as_km2:
                 change = 0.0
             else:
                 change = -100.0
-        change_stats[lc] = str(change)
+        change_stats[lc] = '%.2f' % change
     values_as_percentchange.append(change_stats)
 
 # Save the parsed data as json file
