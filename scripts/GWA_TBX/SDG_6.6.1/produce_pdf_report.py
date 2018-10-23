@@ -15,6 +15,7 @@ Created on Wed Aug  8 08:26:12 2018
 ##OutputFile|report_pdf_file|Output report PDF file|pdf
 
 import os
+from collections import OrderedDict
 
 import json
 import numpy as np
@@ -22,13 +23,13 @@ import pandas as pd
 import xml.etree.ElementTree as et
 
 from qgis.PyQt.QtXml import QDomDocument
-from qgis.core import QgsComposition, QgsFillSymbolV2, QgsRuleBasedRendererV2, QgsComposerHtml
+from qgis.core import QgsComposition, QgsFillSymbolV2, QgsRuleBasedRendererV2, QgsComposerHtml, QgsLegendRenderer, QgsComposerLegendStyle
 from qgis.utils import iface
 from processing.tools import dataobjects
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 
 # Parse raster legend to obtain names of the landcover classes
-raster_classes = {}
+raster_classes = OrderedDict()
 raster_layer = dataobjects.getObjectFromUri(raster)
 style_manager = raster_layer.styleManager()
 style_XML = style_manager.style(style_manager.currentStyle()).xmlData()
@@ -82,6 +83,11 @@ atlas_map = composition.getComposerItemById("atlas_map")
 atlas_map.setAtlasDriven(True)
 atlas_map.setLayerSet([vector_layer.id(), raster_layer.id()])
 atlas_map.setKeepLayerSet(True)
+atlas_legend = composition.getComposerItemById("atlas_legend")
+raster_legend = atlas_legend.modelV2().rootGroup().addLayer(raster_layer)
+QgsLegendRenderer.setNodeLegendStyle(raster_legend, QgsComposerLegendStyle.Hidden)
+atlas_legend.updateLegend ()
+#atlas_legend.refreshLayerLegend(raster_legend)
 stats_table = composition.getComposerItemById("stats_table").multiFrame()
 stats_table.setContentMode(QgsComposerHtml.ManualHtml)
 title_label = composition.getComposerItemById("title_label")
