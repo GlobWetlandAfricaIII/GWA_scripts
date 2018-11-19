@@ -28,7 +28,7 @@
 ##Minimum_mapping_unit = number 3
 ##Plot_water_probability= Boolean False
 ##Plot_certainty_indicator= Boolean False
-##Tile_size= number 2000 
+ 
 
 
 # LOAD LIBRARIES -------------------------------------------------------
@@ -48,6 +48,5 @@ WCR_workflow(Directory_containing_indices,
              End_Date,
              Minimum_mapping_unit,
              Plot_certainty_indicator,
-             Plot_water_probability,
-             Tile_size)
+             Plot_water_probability)
              
