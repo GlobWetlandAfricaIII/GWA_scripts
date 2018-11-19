@@ -75,7 +75,7 @@ for text_file in report_files:
                     regionIds.append(region)
                     periods.append(period)
             else:
-                match = re.match("\|\s*\|(\d+)\|(\s\.)+\|\s*([\d\.,]+)\|", line)
+                match = re.match("\|\s*\|(\d+)\|(\s\.)+\s*\|\s*([\d\.,]+)\|", line)
                 if match:
                     land_cover = match.group(1)
                     try:
