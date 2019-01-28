@@ -18,6 +18,7 @@ input_files = Input_files.replace("\\", "/")
 files = input_files.split(";")
 chl_folder = 'wq_postprocess_chl_'
 tsm_folder = 'wq_postprocess_tsm_'
+chl_eutrophic_folder = 'wq_postprocess_chl_eutrophic_'
 #float_folder = 'wq_postprocess_veg_'
 
 def folder_create(tempfolder):
@@ -54,7 +55,7 @@ def writeGTiff(outFn, Array, driver, rows, cols, GeoT, Projection):
     DataSet.GetRasterBand(1).WriteArray(Array)
 
 
-def execution(outdir, files, chl_folder, tsm_folder):
+def execution(outdir, files, chl_folder, tsm_folder, chl_eutrophic_folder):
     
     ##chl
     tempdir_chl = folder_create(chl_folder) + '/'
@@ -65,7 +66,7 @@ def execution(outdir, files, chl_folder, tsm_folder):
         driver = gdal.GetDriverByName('GTiff')
         driver.Register()
         inData1 = gdal.Open(files[x])
-        raster1 = inData1.GetRasterBand(3)
+        raster1 = inData1.GetRasterBand(5)
         rasterAr1 = raster1.ReadAsArray()
         inWkt, GeoT, rows, cols, Projection, pixelRes = GetGeoInfo(inData1)
         if x < 10:
@@ -77,7 +78,7 @@ def execution(outdir, files, chl_folder, tsm_folder):
         writeGTiff(outFn, rasterAr1, driver, rows, cols, GeoT, Projection)
         
     chl_files_list = [file for file in locate_file('*.tif', tempdir_chl)]
-    cmnd = 'python gdal_merge.py -separate -o "'+ outdir + name + '_chl_eutrophic_timeseries.tif" '
+    cmnd = 'python gdal_merge.py -separate -o "'+ outdir + name + '_chl_timeseries.tif" '
 
     for n in range(len(chl_files_list)):
         cmnd += '"' + str(chl_files_list[n]) + '" '
@@ -99,7 +100,7 @@ def execution(outdir, files, chl_folder, tsm_folder):
         driver = gdal.GetDriverByName('GTiff')
         driver.Register()
         inData2 = gdal.Open(files[x])
-        raster2 = inData2.GetRasterBand(5)
+        raster2 = inData2.GetRasterBand(7)
         rasterAr2 = raster2.ReadAsArray()
         inWkt, GeoT, rows, cols, Projection, pixelRes = GetGeoInfo(inData2)
         if x < 10:
@@ -124,5 +125,39 @@ def execution(outdir, files, chl_folder, tsm_folder):
 
     shutil.rmtree(tempdir_tsm)
 
+    ##chl_eutrophic
+    tempdir_chl_eutrophic = folder_create(chl_eutrophic_folder) + '/'
+    for x in range(len(files)):
+        start = time.time()
+        filename = files[x].split("/")[len(files[x].split("/")) - 1]
+        name = outpref
+        driver = gdal.GetDriverByName('GTiff')
+        driver.Register()
+        inData3 = gdal.Open(files[x])
+        raster3 = inData3.GetRasterBand(3)
+        rasterAr3 = raster3.ReadAsArray()
+        inWkt, GeoT, rows, cols, Projection, pixelRes = GetGeoInfo(inData3)
+        if x < 10:
+            outFn = tempdir_chl_eutrophic + name + '_chl_eutrophic00' + str(x) + '.tif'
+        elif x < 100:
+            outFn = tempdir_chl_eutrophic + name + '_ch_eutrophicl0' + str(x) + '.tif'
+        else:
+            outFn = tempdir_chl_eutrophic + name + '_chl_eutrophic' + str(x) + '.tif'
+        writeGTiff(outFn, rasterAr3, driver, rows, cols, GeoT, Projection)
+        
+    chl_eutrophic_files_list = [file for file in locate_file('*.tif', tempdir_chl_eutrophic)]
+    cmnd = 'python gdal_merge.py -separate -o "'+ outdir + name + '_chl_eutrophic_timeseries.tif" '
 
-execution(outdir, files, chl_folder, tsm_folder)
+    for n in range(len(chl_eutrophic_files_list)):
+        cmnd += '"' + str(chl_eutrophic_files_list[n]) + '" '
+
+    si = subprocess.STARTUPINFO()
+    si.dwFlags |= subprocess._subprocess.STARTF_USESHOWWINDOW
+    process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in iter(process.stdout.readline, ''):
+        progress.setText(line)
+
+    shutil.rmtree(tempdir_chl_eutrophic)
+
+
+execution(outdir, files, chl_folder, tsm_folder, chl_eutrophic_folder)
