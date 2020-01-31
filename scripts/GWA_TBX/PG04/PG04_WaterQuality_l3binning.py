@@ -20,9 +20,9 @@ import math
 @alg.input(type=alg.FILE, name="input_folder", label="Input folder", behavior=1)
 @alg.input(type=alg.NUMBER, name="start_month", label="Select start month for processing",
            default=1, minValue=1, maxValue=12)
-@alg.input(type=alg.NUMBER, name="end_month", label="Select end month for processing",
-           default=2008, minValue=2002, maxValue=2012)
 @alg.input(type=alg.NUMBER, name="year", label="Select year for processing",
+           default=2008, minValue=2002, maxValue=2012)
+@alg.input(type=alg.NUMBER, name="end_month", label="Select end month for processing",
            default=1, minValue=1, maxValue=12)
 @alg.input(type=alg.NUMBER, name="res", label="Set spatial resolution (km/px)",
            default=0.6, minValue=0, maxValue=1000)
@@ -46,6 +46,7 @@ def pg04waterqualityworkflowl3binning(instance, parameters, context, feedback, i
     Output_folder = Output_folder.replace("\\", "/") + "/"
     Input_folder = Input_folder.replace("\\", "/") + "/"
     beam_path = ProcessingConfig.getSetting('BEAM_FOLDER')
+    #beam_path = "C:\Program Files\BEAM-5.0" - for testing
     beam_path = beam_path.replace("\\", "/")
     tempfolder = 'wq_scripts_'
     RE = 6378.145
@@ -142,21 +143,25 @@ def pg04waterqualityworkflowl3binning(instance, parameters, context, feedback, i
         # files.extend(filenames)
 
         cmnd = '"' + beam_path + '/bin/gpt.bat" -c ' + str(mem) + 'G "' + gpt_script + '"'
-        progress.setText('"' + beam_path + '/bin/gpt.bat" -c ' + str(mem) + 'G "')
-        progress.setText(gpt_script + '"')
+        feedback.setProgressText('"' + beam_path + '/bin/gpt.bat" -c ' + str(mem) + 'G "')
+        feedback.setProgressText(gpt_script + '"')
         si = subprocess.STARTUPINFO()
-        si.dwFlags |= subprocess._subprocess.STARTF_USESHOWWINDOW
-        process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        for line in iter(process.stdout.readline, ''):
-            progress.setText(line)
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True).stdout
+        line =""
+        for char in iter((lambda:process.read(1)),''):
+            line += char
+            if "\n" in line:
+                feedback.setProgressText(line)
+                line = ""
         # os.remove(gpt_script)
 
     def execution(Output_folder, Input_folder, beam_path, start_month, end_month, year):
         if Input_folder == "":
-            progress.setText('ERROR: Input folder not defined!')
+            feedback.setProgressText('ERROR: Input folder not defined!')
             return
         elif Output_folder == "/":
-            progress.setText('ERROR: Output folder not defined!')
+            feedback.setProgressText('ERROR: Output folder not defined!')
             return
         else:
             rows = computeNumRows(RE, res)
