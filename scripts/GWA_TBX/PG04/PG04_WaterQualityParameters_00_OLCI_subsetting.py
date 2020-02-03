@@ -1,9 +1,11 @@
 import os
 import glob
 
+import tempfile
 from qgis.processing import alg
 from qgis import processing
-
+from qgis.core import *
+from PyQt5.QtCore import *
 
 @alg(
     name="pg04waterqualitparameters00olcisubsetting",
@@ -12,20 +14,15 @@ from qgis import processing
     group_label=alg.tr("BC")
 )
 @alg.input(type=alg.BOOL, name="dontsubset", label="Don't subset products - In this case no shapefile is needed", default=False)
-@alg.input(type=alg.FILE, name="input_vector", label="Input vector")
-def algorithm(instance, parameters, context, feedback, inputs):
+@alg.input(type=alg.FILE, name="Input_vector", label="Input vector")
+@alg.output(type=alg.FOLDER, name='Output_folder', label='Output_folder')
+def pg04waterqualitparameters00olcisubsetting(instance, parameters, context, feedback, inputs):
     """
-    PG04_WaterQualityParameters_00_OLCI_Subsetting
+    pg04waterqualitparameters00olcisubsetting
     """
-    main()
-
-
-def main(dontsubset, input_vector):
-    from qgis.core import *
-    from PyQt4.QtCore import *
-
-    import tempfile
-
+    dontsubset = parameterAsBool(parameters['dontsubset'])
+    Input_vector = parameterAs(parameters['Input_vector'])
+    
     tempfolder = 'wq_scripts_'
         
 
@@ -85,3 +82,4 @@ def main(dontsubset, input_vector):
         execution(tempfolder, dontsubset)
     else:
         subset_execution(tempfolder, dontsubset, Input_vector)
+    return {OUTPUT: parameters['Output_folder']}
