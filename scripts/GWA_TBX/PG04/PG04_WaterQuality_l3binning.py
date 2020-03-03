@@ -29,6 +29,7 @@ import math
 @alg.input(type=alg.NUMBER, name="mem", label="Insert the amount of RAM (inGB) available for processing",
            default=1, minValue=1, maxValue=31)
 @alg.input(type=alg.FOLDER_DEST, name="Output_folder", label="Output directory")
+
 def pg04waterqualityworkflowl3binning(instance, parameters, context, feedback, inputs):
     """
     Water quality workflow l3 binning

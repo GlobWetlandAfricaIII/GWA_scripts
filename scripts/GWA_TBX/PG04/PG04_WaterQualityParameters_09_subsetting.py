@@ -12,13 +12,16 @@ from qgis.processing import alg
     group_label=alg.tr("BC")
 )
 @alg.input(type=alg.BOOL, name="dontsubset", label="Don't subset products - In this case no shapefile is needed", default=False)
-@alg.input(type=alg.SOURCE, name="Input_vector", label="Input_vector")
+@alg.input(type=alg.SOURCE, name="Input_vector", label="Input_vector", optional=True)
 @alg.output(type=alg.FOLDER, name='Output_folder', label='Output_folder')
 def pg04waterqualityparameterssubsetting(instance, parameters, context, feedback, inputs):
     """
     Water quality parameter subsetting
     """
     tempfolder = 'wq_scripts_'
+    Input_vector1 = instance.parameterAsVectorLayer(parameters, 'Input_vector', context)
+    dontsubset = instance.parameterAsBool(parameters, 'dontsubset', context)
+    Input_vector = instance.parameterAsString(parameters, 'Input_vector', context)
 
     def folder_create(tempfolder):
         try:
@@ -52,10 +55,10 @@ def pg04waterqualityparameterssubsetting(instance, parameters, context, feedback
             text_file.write('dontsubset='+ str(dontsubset).lower() + '\n')
 
     def get_wkt(Input_vector):
-        inlayer = processing.getObject(Input_vector)
+        inlayer = Input_vector1
         for feat in inlayer.getFeatures():
             geom = feat.geometry()
-            wkt_string = geom.exportToWkt().upper()
+            wkt_string = geom.asWkt().upper()
             print(wkt_string)
         return wkt_string
 
