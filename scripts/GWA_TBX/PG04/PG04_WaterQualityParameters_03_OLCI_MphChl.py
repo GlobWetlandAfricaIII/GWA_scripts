@@ -14,8 +14,7 @@ from qgis.processing import alg
 @alg.input(type=alg.NUMBER, name="MPHcyanoMaxValue", label="Cyano maximum value", default=1000, minValue=0)
 @alg.input(type=alg.NUMBER, name="MPHchlThreshForFloatFlag", label="CHL threshold for float flag", default=350, minValue=0)
 @alg.input(type=alg.BOOL, name="MPHexportMph", label="Export MPH", default=False, advanced=True)
-@alg.input(type=alg.FOLDER_DEST, name="Output_folder", label="Output directory")
-
+@alg.output(type=alg.FOLDER, name="Output_folder", label="Output directory")
 def pg04waterqualityparameters03olcimphchl(instance, parameters, context, feedback, inputs):
     """
     Optical-SAR Water and Wetness Fusion
@@ -24,9 +23,7 @@ def pg04waterqualityparameters03olcimphchl(instance, parameters, context, feedba
     MPHvalidPixelExpression = instance.parameterAsString(parameters, "MPHvalidPixelExpression", context)
     MPHcyanoMaxValue = instance.parameterAsEnum(parameters, "MPHcyanoMaxValue", context)
     MPHchlThreshForFloatFlag = instance.parameterAsEnum(parameters, "MPHchlThreshForFloatFlag", context)
-    MPHchlThreshForFloatFlag = instance.parameterAsEnum(parameters, "MPHchlThreshForFloatFlag", context)
-    MPHchlThreshForFloatFlag = instance.parameterAsEnum(parameters, "MPHchlThreshForFloatFlag", context)
-
+    MPHexportMph = instance.parameterAsBool(parameters, "MPHexportMph", context)
 
     tempfolder = 'wq_scripts_'
 
@@ -37,7 +34,7 @@ def pg04waterqualityparameters03olcimphchl(instance, parameters, context, feedba
         except IndexError:
             progress.setConsoleInfo('ERROR: Parameter folder could not be found. Please execute step 1 first!')
             return True
-            
+
     def convert(MPHcyanoMaxValue, MPHchlThreshForFloatFlag):
         MPHcyanoMaxValueS = '%.2f' % MPHcyanoMaxValue
         MPHchlThreshForFloatFlagS = '%.2f' % MPHchlThreshForFloatFlag
@@ -45,10 +42,10 @@ def pg04waterqualityparameters03olcimphchl(instance, parameters, context, feedba
 
     def create_parameterfile(tempdir, MPHvalidPixelExpression, MPHcyanoMaxValueS, MPHchlThreshForFloatFlagS):
         with open(tempdir + "WaterQualityParametersOLCI03.txt", "w") as text_file:
-            text_file.write('mphValidExpression='+ MPHvalidPixelExpression + '\n')
-            text_file.write('mphCyanoMaxValue='+ MPHcyanoMaxValueS + '\n') 
-            text_file.write('mphChlThreshForFloatFlag='+ MPHchlThreshForFloatFlagS + '\n')
-            #text_file.write('mphExportMph='+ str(MPHexportMph).lower() + '\n')
+            text_file.write('mphValidExpression=' + MPHvalidPixelExpression + '\n')
+            text_file.write('mphCyanoMaxValue=' + MPHcyanoMaxValueS + '\n') 
+            text_file.write('mphChlThreshForFloatFlag=' + MPHchlThreshForFloatFlagS + '\n')
+            # text_file.write('mphExportMph=' + str(MPHexportMph).lower() + '\n')
 
     def execution(tempfolder):
         if folder_check(tempfolder):
@@ -59,3 +56,5 @@ def pg04waterqualityparameters03olcimphchl(instance, parameters, context, feedba
             create_parameterfile(tempdir, MPHvalidPixelExpression, MPHcyanoMaxValueS, MPHchlThreshForFloatFlagS)
 
     execution(tempfolder)
+
+    return({'Output_folder': glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]})

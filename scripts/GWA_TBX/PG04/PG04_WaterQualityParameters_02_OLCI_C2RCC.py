@@ -59,7 +59,7 @@ from qgis.processing import alg
            label="Vicarious gains for Oa20", default=1.0000, minValue=0)
 @alg.input(type=alg.NUMBER, name="Vic21", advanced=True,
            label="Vicarious gains for Oa21", default=1.0941, minValue=0)
-@alg.output(type=alg.FILE, name="out", label="remove if possible", behaviour=1)
+@alg.output(type=alg.FILE, name="Input_folder", label="Input folder", behaviour=1)
 
 
 
@@ -110,30 +110,30 @@ def algorithm(instance, parameters, context, feedback, inputs):
 
     def create_parameterfile(tempdir, AverageSalinityS, AverageTemperatureS, validExpression, Vic01, Vic02, Vic03, Vic04, Vic05, Vic06, Vic07, Vic08, Vic09, Vic10, Vic11, Vic12, Vic13, Vic14, Vic15, Vic16, Vic17, Vic18, Vic19, Vic20, Vic21):
         with open(tempdir + "WaterQualityParametersOLCI02.txt", "w") as text_file:
-            text_file.write('averageSalinity='+ AverageSalinityS + '\n') 
-            text_file.write('averageTemperature='+ AverageTemperatureS + '\n')
-            text_file.write('c2ValidExpression='+ validExpression + '\n')
-            text_file.write('Oa01_vic='+ str(Vic01) + '\n')
-            text_file.write('Oa02_vic='+ str(Vic02) + '\n')
-            text_file.write('Oa03_vic='+ str(Vic03) + '\n')
-            text_file.write('Oa04_vic='+ str(Vic04) + '\n')
-            text_file.write('Oa05_vic='+ str(Vic05) + '\n')
-            text_file.write('Oa06_vic='+ str(Vic06) + '\n')
-            text_file.write('Oa07_vic='+ str(Vic07) + '\n')
-            text_file.write('Oa08_vic='+ str(Vic08) + '\n')
-            text_file.write('Oa09_vic='+ str(Vic09) + '\n')
-            text_file.write('Oa10_vic='+ str(Vic10) + '\n')
-            text_file.write('Oa11_vic='+ str(Vic11) + '\n')
-            text_file.write('Oa12_vic='+ str(Vic12) + '\n')
-            text_file.write('Oa13_vic='+ str(Vic13) + '\n')
-            text_file.write('Oa14_vic='+ str(Vic14) + '\n')
-            text_file.write('Oa15_vic='+ str(Vic15) + '\n')
-            text_file.write('Oa16_vic='+ str(Vic16) + '\n')
-            text_file.write('Oa17_vic='+ str(Vic17) + '\n')
-            text_file.write('Oa18_vic='+ str(Vic18) + '\n')
-            text_file.write('Oa19_vic='+ str(Vic19) + '\n')
-            text_file.write('Oa20_vic='+ str(Vic20) + '\n')
-            text_file.write('Oa21_vic='+ str(Vic21) + '\n')
+            text_file.write('averageSalinity=' + AverageSalinityS + '\n') 
+            text_file.write('averageTemperature=' + AverageTemperatureS + '\n')
+            text_file.write('c2ValidExpression=' + validExpression + '\n')
+            text_file.write('Oa01_vic=' + str(Vic01) + '\n')
+            text_file.write('Oa02_vic=' + str(Vic02) + '\n')
+            text_file.write('Oa03_vic=' + str(Vic03) + '\n')
+            text_file.write('Oa04_vic=' + str(Vic04) + '\n')
+            text_file.write('Oa05_vic=' + str(Vic05) + '\n')
+            text_file.write('Oa06_vic=' + str(Vic06) + '\n')
+            text_file.write('Oa07_vic=' + str(Vic07) + '\n')
+            text_file.write('Oa08_vic=' + str(Vic08) + '\n')
+            text_file.write('Oa09_vic=' + str(Vic09) + '\n')
+            text_file.write('Oa10_vic=' + str(Vic10) + '\n')
+            text_file.write('Oa11_vic=' + str(Vic11) + '\n')
+            text_file.write('Oa12_vic=' + str(Vic12) + '\n')
+            text_file.write('Oa13_vic=' + str(Vic13) + '\n')
+            text_file.write('Oa14_vic=' + str(Vic14) + '\n')
+            text_file.write('Oa15_vic=' + str(Vic15) + '\n')
+            text_file.write('Oa16_vic=' + str(Vic16) + '\n')
+            text_file.write('Oa17_vic=' + str(Vic17) + '\n')
+            text_file.write('Oa18_vic=' + str(Vic18) + '\n')
+            text_file.write('Oa19_vic=' + str(Vic19) + '\n')
+            text_file.write('Oa20_vic=' + str(Vic20) + '\n')
+            text_file.write('Oa21_vic=' + str(Vic21) + '\n')
 
 
     def execution(tempfolder):
@@ -145,3 +145,5 @@ def algorithm(instance, parameters, context, feedback, inputs):
             create_parameterfile(tempdir, AverageSalinityS, AverageTemperatureS, validExpression, Vic01, Vic02, Vic03, Vic04, Vic05, Vic06, Vic07, Vic08, Vic09, Vic10, Vic11, Vic12, Vic13, Vic14, Vic15, Vic16, Vic17, Vic18, Vic19, Vic20, Vic21)
 
     execution(tempfolder)
+    Input_folder = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
+    return {'Input_folder': Input_folder}  # TODO CHECK IF WORKS
