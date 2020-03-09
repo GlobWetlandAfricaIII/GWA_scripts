@@ -85,7 +85,7 @@ def pg04waterqualityworkflowsnapgraphprocessor(instance, parameters, context, fe
                     subset = False
             gpt_script = create_graph(tempdir, subset, NN_PATH)
             processing(tempdir, Output_folder, input_files_list, snap_path, gpt_script, paramfile)
-            #shutil.rmtree(tempdir)
+            # shutil.rmtree(tempdir)
 
     def folder_check(tempfolder):
         try:

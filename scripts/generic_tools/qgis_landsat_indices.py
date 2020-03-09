@@ -11,14 +11,14 @@
 import os
 import sys
 
-here = os.path.dirname(scriptDescriptionFile)
+here = os.path.dirname(os.path.realpath('__file__'))
 if here not in sys.path:
     sys.path.append(here)
 import landsat_indices
 from processing.tools import dataobjects
 
-print 'Starting index calculation...'
+print('Starting index calculation...')
 out_file = landsat_indices.landsat_indices(input, outputDirectory)
 dataobjects.load(out_file, isRaster=True)
-print 'Finished writing to disk...'
+print('Finished writing to disk...')
 

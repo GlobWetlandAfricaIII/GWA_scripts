@@ -21,7 +21,7 @@ def pg04waterqualitparameters00olcisubsetting(instance, parameters, context, fee
     pg04waterqualitparameters00olcisubsetting
     """
     tempfolder = 'wq_scripts_'
-    
+    feedback.pushConsoleInfo(os.path.realpath(__file__))
     Input_vector1 = instance.parameterAsVectorLayer(parameters, 'Input_vector', context)
     dontsubset = instance.parameterAsBool(parameters, 'dontsubset', context)
     Input_vector = instance.parameterAsString(parameters, 'Input_vector', context)
