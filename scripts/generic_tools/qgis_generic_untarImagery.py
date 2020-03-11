@@ -23,12 +23,6 @@ def untarimagery(instance, parameters, context, feedback, inputs):
 
     processing_path = instance.parameterAsString(parameters, 'processing_path', context)
     infile = instance.parameterAsString(parameters, 'infile', context)
-    
-    here = os.path.dirname(os.path.realpath('__file__'))
-    feedback.pushCommandInfo(here)
-    if here not in sys.path:
-        sys.path.append(here)
-
 
     def untar(infile, processing_path):
         tar = tarfile.open(infile)
