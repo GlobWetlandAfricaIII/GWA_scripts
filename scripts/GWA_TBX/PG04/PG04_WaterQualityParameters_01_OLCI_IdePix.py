@@ -31,7 +31,7 @@ def pg04waterqualityparameter01olciidepix(instance, parameters, context, feedbac
             tempdir = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
             return tempdir
         except:
-            progress.setConsoleInfo('Temporary folder:' + tempfolder + ' does not exist and will be created.')
+            feedback.pushConsoleInfo('Temporary folder:' + tempfolder + ' does not exist and will be created.')
             tempfile.mkdtemp(prefix=tempfolder)
             tempdir = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
             return tempdir
@@ -41,7 +41,7 @@ def pg04waterqualityparameter01olciidepix(instance, parameters, context, feedbac
             tempdir = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
             return False
         except IndexError:
-            progress.setConsoleInfo('ERROR: Temporary folder:' + tempfolder + ' cloud not be created. Check for administration rights to create folder.')
+            feedback.pushConsoleInfo('ERROR: Temporary folder:' + tempfolder + ' cloud not be created. Check for administration rights to create folder.')
             return True
 
     def create_parameterfile(tempdir, CloudBuffer, CloudBufferWidth,  OutputCloudProbabilityFeatureValue):

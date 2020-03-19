@@ -162,7 +162,7 @@ if not proj_sar.IsSame(proj_opt) or (geotrans_opt[1] != pix_size_sar):
     path_watermask_sar_reprojected = path_watermask_sar[:-4] + "_reprojected.tif"
     if not os.path.exists(path_watermask_sar_reprojected):
         if not DEBUG:
-            progress.setText('Reprojecting SAR water mask ...')
+            feedback.setProgressText('Reprojecting SAR water mask ...')
         else:
             print("Reprojecting SAR water mask ...")
         cmd = ["gdalwarp", "-ot", "Byte", "-of", "GTiff", "-tr", str(geotrans_opt[1]), str(geotrans_opt[1]),
@@ -201,7 +201,7 @@ watermask_opt_max, geotrans_opt, proj_str_opt = rsu.raster2array(path_watermask_
 for wm_file in watermask_files:
 
     if not DEBUG:
-        progress.setText("Fusing water mask %s" % os.path.basename(wm_file))
+        feedback.setProgressText("Fusing water mask %s" % os.path.basename(wm_file))
 
     # Extract date
     idx_date = wm_file.find("_d") + 2

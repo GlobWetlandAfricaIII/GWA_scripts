@@ -48,7 +48,7 @@ def pg04waterqualityworkflowgraphprocessorv5(instance, parameters, context, feed
             tempdir = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
             return False
         except IndexError:
-            progress.setConsoleInfo('ERROR: Parameter folder could not be found. Please execute steps 1-7 first!')
+            feedback.pushConsoleInfo('ERROR: Parameter folder could not be found. Please execute steps 1-7 first!')
             return True
 
     def folder_create(tempfolder):
@@ -460,19 +460,19 @@ def pg04waterqualityworkflowgraphprocessorv5(instance, parameters, context, feed
             return True
         else:
             if not os.path.isfile(tempdir + param0):
-                progress.setConsoleInfo('ERROR: Parameter file 1 missing. Please execute step 1 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 1 missing. Please execute step 1 first!')
             if not os.path.isfile(tempdir + param1):
-                progress.setConsoleInfo('ERROR: Parameter file 1 missing. Please execute step 1-2 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 1 missing. Please execute step 1-2 first!')
             if not os.path.isfile(tempdir + param2):
-                progress.setConsoleInfo('ERROR: Parameter file 2 missing. Please execute steps 1-3 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 2 missing. Please execute steps 1-3 first!')
             if not os.path.isfile(tempdir + param3):
-                progress.setConsoleInfo('ERROR: Parameter file 3 missing. Please execute step 1-4 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 3 missing. Please execute step 1-4 first!')
             if not os.path.isfile(tempdir + param4):
-                progress.setConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-5 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-5 first!')
             if not os.path.isfile(tempdir + param5):
-                progress.setConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-6 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-6 first!')
             if not os.path.isfile(tempdir + param6):
-                progress.setConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-7 first!')
+                feedback.pushConsoleInfo('ERROR: Parameter file 4 missing. Please execute step 1-7 first!')
             return False
 
     def concat_param(tempdir, param0, param1, param2, param3, param4, param5, param6):
@@ -491,7 +491,7 @@ def pg04waterqualityworkflowgraphprocessorv5(instance, parameters, context, feed
             # files.extend(filenames)
 
         if Input_files_list == []:
-            progress.setText('WARNING: Input folder empty!')
+            feedback.setProgressText('WARNING: Input folder empty!')
 
         for n in range(0, len(Input_files_list)):
             inputfile = Input_files_list[n]
@@ -499,24 +499,24 @@ def pg04waterqualityworkflowgraphprocessorv5(instance, parameters, context, feed
             ext = filename.split(".", 1)[1]
             ext_len = len(ext) + 1
             cmnd = '"' + beam_path + '/bin/gpt.bat" "' + gpt_script + '"' + ' -p "' + paramfile + '" ' + ' -PsourceFile="' + inputfile + '" -PtargetbasePath="' + Output_folder + filename[:-3] + '"'
-            progress.setText('"' + beam_path + '/bin/gpt.bat"' )
-            progress.setText('"' + gpt_script + '"' + ' -p "' + paramfile + '" ')
-            progress.setText(' -PsourceFile="' + inputfile + '"')
-            progress.setText('-PtargetbasePath="' + Output_folder + filename[:-ext_len] + '"')
+            feedback.setProgressText('"' + beam_path + '/bin/gpt.bat"' )
+            feedback.setProgressText('"' + gpt_script + '"' + ' -p "' + paramfile + '" ')
+            feedback.setProgressText(' -PsourceFile="' + inputfile + '"')
+            feedback.setProgressText('-PtargetbasePath="' + Output_folder + filename[:-ext_len] + '"')
             si = subprocess.STARTUPINFO()
             si.dwFlags |= subprocess._subprocess.STARTF_USESHOWWINDOW
             process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     #         process = subprocess.Popen(cmnd, startupinfo=si, stdout=subprocess.PIPE)
             for line in iter(process.stdout.readline, ''):
-                progress.setText(line)
+                feedback.setProgressText(line)
         # os.remove(gpt_script)
 
     def execution(tempfolder, Output_folder, Input_files_list, beam_path, param0, param1, param2, param3, param4, param5, param6):
         if input_files == "":
-            progress.setText('ERROR: Input folder not defined!')
+            feedback.setProgressText('ERROR: Input folder not defined!')
             return
         elif Output_folder == "/":
-            progress.setText('ERROR: Output folder not defined!')
+            feedback.setProgressText('ERROR: Output folder not defined!')
             return
         elif folder_check(tempfolder):
             return

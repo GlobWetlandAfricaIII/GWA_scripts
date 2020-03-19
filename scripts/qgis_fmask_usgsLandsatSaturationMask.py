@@ -16,7 +16,7 @@ here = os.path.dirname(scriptDescriptionFile)
 if here not in sys.path:
     sys.path.append(here)
 
-from interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
+from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
 
 cmdargs = Namespace(
         infile=infile,

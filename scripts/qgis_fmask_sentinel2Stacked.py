@@ -24,22 +24,22 @@ here = os.path.dirname(scriptDescriptionFile)
 if here not in sys.path:
     sys.path.append(here)
 
-from stacks.sentinel_stack import create_sentinel_stack
-from interfaces.fmask_sentinel2Stacked import mainRoutine
-from interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
-from interfaces.redirect_print import redirect_print
-from interfaces.s2meta import find_xml_in_granule_dir
+from qgis_fmask.stacks.sentinel_stack import create_sentinel_stack
+from qgis_fmask.interfaces.fmask_sentinel2Stacked import mainRoutine
+from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
+from qgis_fmask.interfaces.redirect_print import redirect_print
+from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 
 
 tempdir = tempfile.mkdtemp()
 try:
-    progress.setConsoleInfo('Creating Sentinel 2 band stack VRT file ...')
+    feedback.pushConsoleInfo('Creating Sentinel 2 band stack VRT file ...')
     tempvrt = os.path.join(tempdir, 'temp.vrt')
     create_sentinel_stack(granuledir, outfile=tempvrt)
-    progress.setConsoleInfo('Done.')
+    feedback.pushConsoleInfo('Done.')
 
     if not anglesfile:
-        progress.setConsoleInfo('Creating angles file ...')
+        feedback.pushConsoleInfo('Creating angles file ...')
         anglesfile = os.path.join(tempdir, 'angles.img')
         cmdargs_angles = Namespace(
                 infile=find_xml_in_granule_dir(granuledir),
@@ -47,7 +47,7 @@ try:
         import numpy as np
         with np.errstate(invalid='ignore'):
             mainRoutine_angles(cmdargs_angles)
-        progress.setConsoleInfo('Done.')
+        feedback.pushConsoleInfo('Done.')
 
     cmdargs = Namespace(
             toa=tempvrt,
@@ -63,7 +63,7 @@ try:
             nirsnowthreshold=nirsnowthreshold,
             greensnowthreshold=greensnowthreshold)
 
-    progress.setConsoleInfo('Running FMask (this may take a while) ...')
+    feedback.pushConsoleInfo('Running FMask (this may take a while) ...')
     with redirect_print(progress):
         mainRoutine(cmdargs)
 finally:
@@ -72,5 +72,5 @@ finally:
     except OSError:
         pass
 
-progress.setConsoleInfo('Done.')
+feedback.pushConsoleInfo('Done.')
 dataobjects.load(output, os.path.basename(output))

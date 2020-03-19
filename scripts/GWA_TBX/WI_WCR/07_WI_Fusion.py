@@ -154,7 +154,7 @@ if not proj_sar.IsSame(proj_opt) or (geotrans_opt[1] != pix_size_sar):
     path_water_freq_sar_reprojected = path_water_freq_sar[:-4] + "_reprojected.tif"
     if not os.path.exists(path_water_freq_sar_reprojected):
         if not DEBUG:
-            progress.setText('Reprojecting SAR water frequency ...')
+            feedback.setProgressText('Reprojecting SAR water frequency ...')
         else:
             print("Reprojecting SAR water frequency ...")
         cmd = ["gdalwarp", "-ot", "Byte", "-of", "GTiff", "-tr", str(geotrans_opt[1]), str(geotrans_opt[1]),
@@ -173,7 +173,7 @@ if not proj_sar.IsSame(proj_opt) or (geotrans_opt[1] != pix_size_sar):
         path_wet_freq_sar_reprojected = path_wet_freq_sar[:-4] + "_reprojected.tif"
         if not os.path.exists(path_wet_freq_sar_reprojected):
             if not DEBUG:
-                progress.setText('Reprojecting SAR wetness frequency ...')
+                feedback.setProgressText('Reprojecting SAR wetness frequency ...')
             else:
                 print("Reprojecting SAR wet frequency ...")
             cmd = ["gdalwarp", "-ot", "Byte", "-of", "GTiff", "-tr", str(geotrans_opt[1]), str(geotrans_opt[1]),
@@ -231,7 +231,7 @@ for wm_file in watermask_files:
         continue
 
     if not DEBUG:
-        progress.setText("Fusing water mask %s" % os.path.basename(wm_file))
+        feedback.setProgressText("Fusing water mask %s" % os.path.basename(wm_file))
 
     # Read watermask as nparray
     watermask_opt, geotrans, proj = rsu.raster2array(os.path.join(path_masks_opt, wm_file), AOI_extent=extent_AOI)
@@ -265,7 +265,7 @@ for wm_file in watermask_files:
         if wet_files_soil:
 
             if not DEBUG:
-                progress.setText("Fusing wetness mask %s" % wet_files_soil[0])
+                feedback.setProgressText("Fusing wetness mask %s" % wet_files_soil[0])
 
             # Wetness mask
             if len(wet_files_soil) != 0:

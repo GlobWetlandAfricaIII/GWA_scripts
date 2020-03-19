@@ -20,12 +20,12 @@ here = os.path.dirname(scriptDescriptionFile)
 if here not in sys.path:
     sys.path.append(here)
 
-from stacks.landsat_stack import create_landsat_stack
-from interfaces.fmask_usgsLandsatTOA import mainRoutine
-from interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
-from interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
-from interfaces.redirect_print import redirect_print
-from interfaces.landsatmeta import find_mtl_in_product_dir
+from qgis_fmask.stacks.landsat_stack import create_landsat_stack
+from qgis_fmask.interfaces.fmask_usgsLandsatTOA import mainRoutine
+from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
+from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
+from qgis_fmask.interfaces.redirect_print import redirect_print
+from qgis_fmask.interfaces.landsatmeta import find_mtl_in_product_dir
 
 landsatkey = ['4&5', '7', '8'][landsatkeynr]
 
@@ -34,24 +34,24 @@ try:
     mtl = find_mtl_in_product_dir(productdir)
 
     # create band stack
-    progress.setConsoleInfo('Creating band stack ...')
+    feedback.pushConsoleInfo('Creating band stack ...')
     refimg = os.path.join(tempdir, 'ref.vrt')
     create_landsat_stack(productdir, outfile=refimg, imagename='ref', landsatkey=landsatkey)
-    progress.setConsoleInfo('Done.')
+    feedback.pushConsoleInfo('Done.')
 
     # create angles file
     anglesfile = anglesfile or os.path.join(tempdir, 'angles.img')
     if not os.path.isfile(anglesfile):
-        progress.setConsoleInfo('Creating angles file ...')
+        feedback.pushConsoleInfo('Creating angles file ...')
         with np.errstate(invalid='ignore'):
             mainRoutine_angles(
                     Namespace(
                         mtl=mtl,
                         templateimg=refimg,
                         outfile=anglesfile))
-        progress.setConsoleInfo('Done.')
+        feedback.pushConsoleInfo('Done.')
 
-    progress.setConsoleInfo('Creating TOA image ...')
+    feedback.pushConsoleInfo('Creating TOA image ...')
     cmdargs = Namespace(
             infile=refimg,
             mtl=mtl,
@@ -59,7 +59,7 @@ try:
             output=outfile)
     with np.errstate(invalid='ignore'):
         mainRoutine(cmdargs)
-    progress.setConsoleInfo('Done.')
+    feedback.pushConsoleInfo('Done.')
 
 finally:
     try:

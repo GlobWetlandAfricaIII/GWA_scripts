@@ -85,7 +85,7 @@ for i,inFile in enumerate(SARfiles):
     print("Processing %s of %s files" % (i+1, len(SARfiles)))
 
     if not debug:
-        progress.setText("Processing %s of %s files" % (i+1, len(SARfiles)))
+        feedback.setProgressText("Processing %s of %s files" % (i+1, len(SARfiles)))
 
     outfile = os.path.join(outDirFiltered, os.path.basename(inFile)[:-4] + "_filtered.tif")
     data = gdal.Open(inFile)

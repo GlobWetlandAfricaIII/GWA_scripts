@@ -99,7 +99,7 @@ def algorithm(instance, parameters, context, feedback, inputs):
             tempdir = glob.glob(os.path.join(tempfile.gettempdir(), tempfolder + '*'))[0]
             return False
         except IndexError:
-            progress.setConsoleInfo('ERROR: Parameter folder could not be found. Please execute step 1 first!')
+            feedback.pushConsoleInfo('ERROR: Parameter folder could not be found. Please execute step 1 first!')
             return True
             
     def convert(AverageSalinity, AverageTemperature):

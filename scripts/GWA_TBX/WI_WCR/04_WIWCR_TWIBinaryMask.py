@@ -58,7 +58,7 @@ extentBuffer=0
 outfile_binary = os.path.join(out_dir, "TWIbinary.tif")
 
 if not DEBUG:
-    progress.setText("Creating binary mask ...")
+    feedback.setProgressText("Creating binary mask ...")
 
 # Median filter
 TWI, geotrans, proj = rsu.raster2array(path_TWI)
@@ -100,5 +100,5 @@ except:
     dataobjects.load(path_TWI_filtered, os.path.basename(path_TWI_filtered))
 
 if not DEBUG:
-    progress.setText("TWI binary mask done.")
+    feedback.setProgressText("TWI binary mask done.")
 
