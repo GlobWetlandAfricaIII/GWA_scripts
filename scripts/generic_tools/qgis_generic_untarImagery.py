@@ -28,7 +28,7 @@ def untarimagery(instance, parameters, context, feedback, inputs):
         tar = tarfile.open(infile)
         tarfiles = tar.getnames()
         feedback.pushConsoleInfo('Unpacking data:')
-        feedback.pushConsoleInfo(tarfiles)
+        feedback.pushConsoleInfo(str(tarfiles))
         tar.extractall(processing_path)
         tar.close()
         return tarfiles
@@ -50,7 +50,7 @@ def untarimagery(instance, parameters, context, feedback, inputs):
 
     # paths to the .tif files
     fls = [os.path.join(processing_path, f) for f in tarfiles]
-    feedback.pushConsoleInfo(fls)
+    feedback.pushConsoleInfo(str(fls))
 
     bandfile_list = []
     type(bandfile_list)
@@ -62,6 +62,6 @@ def untarimagery(instance, parameters, context, feedback, inputs):
                     bandfile_list.append(cont)
 
     for layer in bandfile_list:
-            dataobjects.load(layer,  isRaster=True)
+            dataobjects.load(layer, isRaster=True)
 
     return({'outfolder': instance.parameterAsString(parameters, 'processing_path', context)})

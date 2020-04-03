@@ -1,6 +1,7 @@
 from qgis.processing import alg
 from processing.core.ProcessingConfig import ProcessingConfig
-from processing.tools import dataobjects, system
+from db_manager.db_plugins import data_model
+from processing.tools import system
 from qgis import processing
 
 @alg(
@@ -17,34 +18,38 @@ from qgis import processing
 @alg.input(type=bool, name="maskSnow", label="Mask FMask snow pixels", default=True)
 @alg.input(type=bool, name="maskWater", label="Mask FMask water pixels", default=False, advanced=True)
 @alg.input(type=bool, name="maskLand", label="Mask FMask land pixels", default=False, advanced=True)
-@alg.output(type=alg.RASTER_LAYER, name="outputFile", label="Maked output image")
-
-
+@alg.input(type=alg.RASTER_LAYER, name="outputFile", label="Maked output image")
+@alg.output(type=alg.RASTER_LAYER, name="ehm", label="Maked output image")
 def burncloudmask(instance, parameters, context, feedback, inputs):
     ''' burncloudmask '''
+
+    dataRaster = instance.parameterAsRasterLayer(parameters, 'dataFile', context)
     # Run GDAL warp to make sure that the mask file exactly aligns with the image file
+
     feedback.setProgressText("Aligning mask raster to image raster...")
-    dataRaster = dataobjects.getObject(dataFile)
-    proj = dataRaster.crs().authid()
+    # feedback.setProgressText(str(dir(dataRaster)))
+
+    feedback.setProgressText(str(dir(parameters['dataFile'])))
+    extent = dataRaster.extent().asWktPolygon()
+    proj = dataRaster.crs().toWkt()
     resolution = dataRaster.rasterUnitsPerPixelX()
     bandCount = dataRaster.bandCount()
-    extent = dataobjects.extent([dataRaster])
     warpMask = system.getTempFilename("tif")
-    params = {"INPUT": maskFile, "DEST_SRS": proj, "TR": resolution, "USE_RASTER_EXTENT": True,
+    params = {"INPUT": parameters['maskFile'], "DEST_SRS": proj, "TR": resolution, "USE_RASTER_EXTENT": True,
             "RASTER_EXTENT": extent, "EXTENT_CRS": proj, "METHOD": 0, "RTYPE": 0, "OUTPUT": warpMask}
-    processing.run("gdalogr:warpreproject", params, context, feedback)
+    processing.run("gdal:warpreproject", params, feedback=feedback, context=context)
 
     feedback.setProgressText("Applying mask to image...")
     # First reclassify fmask output into two classes
-    flags = [maskNull, maskLand, maskCloud, maskShadow, maskSnow, maskWater]
+    flags = [parameters['maskNull'], parameters['maskLand'], parameters['maskCloud'], parameters['maskShadow'], parameters['maskSnow'], parameters['maskWater']]
     maskClass = [str(i) for i in range(len(flags)) if flags[i]]
     leaveClass = [str(i) for i in range(len(flags)) if not flags[i]]
     reclassString = " ".join(maskClass) + " = 0\n" + " ".join(leaveClass) + " = 1"
     reclassMask = system.getTempFilename("tif")
     params = {"input": warpMask, "txtrules": reclassString, "output": reclassMask,
             "GRASS_REGION_PARAMETER": extent, "GRASS_REGION_CELLSIZE_PARAMETER": resolution}
-    processing.run("grass7:r.reclass", params, context, feedback)
+    processing.run("grass7:r.reclass", params, feedback=feedback, context=context)
 
     # Then use OTB band maths on all bands
-    params = {"-il":  dataFile+";"+reclassMask, "-exp": "im1*im2b1", "-out": outputFile}
-    processing.run("otb:bandmathx", params, context, feedback)
+    params = {"-il": parameters['dataFile'] + ";" + reclassMask, "-exp": "im1*im2b1", "-out": parameters['outputFile']}
+    processing.run("otb:bandmathx", params, feedback=feedback, context=context)
