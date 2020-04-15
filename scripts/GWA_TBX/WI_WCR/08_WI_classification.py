@@ -90,7 +90,7 @@ if not os.path.exists(path_output_classification):
     os.mkdir(path_output_classification)
 
 if not DEBUG:
-    progress.setText(path_output_classification)
+    feedback.setProgressText(path_output_classification)
 
 # Check start and end dates ------------------------------------------------------------------------
 if start_date != "":
@@ -138,8 +138,8 @@ if len(watermask_files) == 0:
 else:
     print ("Found " + str(len(watermask_files)) + " water mask files.\n")
     if not DEBUG:
-        progress.setText("Found " + str(len(watermask_files)) + " water mask files.\n")
-        progress.setText("\n".join(watermask_files))
+        feedback.setProgressText("Found " + str(len(watermask_files)) + " water mask files.\n")
+        feedback.setProgressText("\n".join(watermask_files))
 
 # Get joint extent of all watermasks
 joint_extent = rsu.getJointExtent(watermask_files)
@@ -148,7 +148,7 @@ geotrans, proj = rsu.raster2array(watermask_files[0], joint_extent)[1:3]
 # CALCULATE WATER FREQUENCY ----------------------------------------------------------------------------------------
 
 if not DEBUG:
-    progress.setText("Calculating water frequency ...")
+    feedback.setProgressText("Calculating water frequency ...")
 
 # Read in watermasks
 watermasks = []
@@ -181,7 +181,7 @@ water_frequency = (water_occurrence / valid_obs) * 100.
 # CALCULATE WETNESS FREQUENCY ----------------------------------------------------------------------------------------
 
 if not DEBUG:
-    progress.setText("Calculating wetness frequency ...")
+    feedback.setProgressText("Calculating wetness frequency ...")
 
 # Wetness masks
 wetmasks = []
@@ -260,7 +260,7 @@ for wm_file in watermask_files:
         wetmasks.append(wetmask_fused)
 
 if not DEBUG:
-    progress.setText("Writing classification to file ...")
+    feedback.setProgressText("Writing classification to file ...")
 
 # Make watermask stack
 wetmasks = np.array(wetmasks)
@@ -465,7 +465,7 @@ if not DEBUG:
 
 
 if not DEBUG:
-    progress.setText('Wetland Inventory classification done.\n')
+    feedback.setProgressText('Wetland Inventory classification done.\n')
 else:
     print('Wetland Inventory classification done.')
 

@@ -1,23 +1,33 @@
-#Definition of inputs and outputs
-#==================================
-##SDG 6.6.1 reporting=group
-##Reproject raster and vector layers=name
-##ParameterRaster|inputRaster|Raster layer|
-##ParameterVector|inputVector|Vector layer|2
-##ParameterCrs|projection|Metric coordinate system (UTM)|
-##OutputRaster|outputRaster|Reprojected raster layer
-##OutputVector|outputVector|Reprojected vector layer
+from qgis.processing import alg
+from qgis import processing
 
-# This script is not made as a model because there is no ParameterCrs in the QGIS 2.x 
-# modeler (it exists in QGIS 3.x)
 
-# Run GDAL warp to reproject raster layer
-progress.setText("Reprojecting raster...")
-params = {'INPUT': inputRaster, 'DEST_SRS': projection, 'METHOD': 0,  
-                 'RTYPE': 1, 'OUTPUT': outputRaster}
-processing.runalg("gdalogr:warpreproject", params)
+@alg(name="reprojectrasterandvectorlayers",
+     label=alg.tr("Reproject raster and vector layers"),
+     group="sdg661reporting",
+     group_label=alg.tr("SDG 6.6.1 reporting"))
+@alg.input(type=alg.RASTER_LAYER, name="inputRaster", label="Raster layer")
+@alg.input(type=alg.VECTOR_LAYER, name="inputVector", label="Vector layer")
+@alg.input(type=alg.CRS, name="projection", label="Metric coordinate system (UTM)")
+@alg.input(type=alg.RASTER_LAYER_DEST, name="outputRaster", label="Reprojected raster layer")
+@alg.input(type=alg.VECTOR_LAYER_DEST, name="outputVector", label="Reprojected vector layer")
+def reproject_raster_and_vector(instance, parameters, context, feedback, inputs):
+    """
+    Reproject raster and vector layers
+    """
+    feedback.setProgressText("Reprojecting vector...")
+    params = {'INPUT': parameters['inputVector'],
+              'TARGET_CRS': parameters['projection'],
+              'OUTPUT': parameters['outputVector']}
+    vector_result = processing.run("native:reprojectlayer", params, is_child_algorithm=True,
+                                   context=context, feedback=feedback)
 
-# Run ReprojectLayer to reproject vector layer
-progress.setText("Reprojecting vector...")
-params = {'INPUT': inputVector, 'TARGET_CRS': projection,  'OUTPUT': outputVector}
-processing.runalg("qgis:reprojectlayer", params)
+    feedback.setProgressText("Reprojecting raster...")
+    params = {'INPUT': parameters['inputRaster'],
+            'TARGET_CRS': parameters['projection'],
+            'OUTPUT': parameters['outputRaster']}
+    raster_result = processing.run("gdal:warpreproject", params, is_child_algorithm=True,
+                                   context=context, feedback=feedback)
+    
+    return {'OUTPUT_RASTER': raster_result['OUTPUT'],
+            'OUTPUT_VECTOR': vector_result['OUTPUT']}

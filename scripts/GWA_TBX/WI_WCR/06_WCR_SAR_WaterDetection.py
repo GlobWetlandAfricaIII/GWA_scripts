@@ -338,7 +338,7 @@ if len(zips_filtered) == 0:
 # Snappy pre-processing
 for idx, zip in enumerate(zips_filtered):
     #print 'Begin processing of', str(len(zips_filtered)), ' Sentinel-1 scenes'
-    progress.setText('Start pre-processing ' + str(idx + 1) + ' of ' + str(
+    feedback.setProgressText('Start pre-processing ' + str(idx + 1) + ' of ' + str(
          len(zips_filtered)) + ' Sentinel-1 scene(s). This could take some time')
 
     path_zip = os.path.join(path_imagery, zip)
@@ -356,11 +356,11 @@ for idx, zip in enumerate(zips_filtered):
         try:
             dst = Sentinel1_preproc(path_zip, path_tmp_files, date, path_AOI)
         except:
-            progress.setText("Scene and AOI not overlapping?...skip scene")
+            feedback.setProgressText("Scene and AOI not overlapping?...skip scene")
             continue
 
 progress.setPercentage(50)
-progress.setText('Compute watermask')
+feedback.setProgressText('Compute watermask')
 # Compute watermasks
 # call compiled version of s1_waterdetection.py (input args: path_tmp_files, path_AOI, pathOUT)
 

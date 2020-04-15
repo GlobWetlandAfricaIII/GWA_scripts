@@ -38,10 +38,10 @@ if processing.runalg("grass7:r.kappa",classification,reference,'CHANGE DETECTION
             elif line.startswith('Error Matrix'):
                 writeLines = True
                 outputFile.write('Change detection matrix\n')
-    progress.setText('Saved change detection matrix to file %s' % output)
+    feedback.setProgressText('Saved change detection matrix to file %s' % output)
     loglines.append('Saved change detection matrix to file %s' % output)
     ProcessingLog.addToLog(ProcessingLog.LOG_INFO, loglines)
 else:
-    progress.setText('ERROR running r.kappa. Check log for details.')
+    feedback.setProgressText('ERROR running r.kappa. Check log for details.')
     loglines.append('ERROR running r.kappa. Check log for details.')
     ProcessingLog.addToLog(ProcessingLog.LOG_INFO, loglines)

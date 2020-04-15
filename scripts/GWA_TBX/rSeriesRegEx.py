@@ -141,7 +141,7 @@ loglines.append('')
 
 oldDir = os.getcwd()
 
-progress.setText("Looking for matching files.")
+feedback.setProgressText("Looking for matching files.")
 getFiles(os.path.dirname(dataDir), filenameFormat, outputFileFormat, groupFiles, outputFiles, groupBy)
 
 os.chdir(oldDir)
@@ -152,12 +152,12 @@ if len(groupFiles) == 0 or len(outputFiles) == 0:
 else:
     # run r.series for each group of files
     GrassUtils.startGrassSession()
-    progress.setText("Starting GRASS r.series executions")
+    feedback.setProgressText("Starting GRASS r.series executions")
     loglines.append("Starting GRASS r.series executions")
     iteration = 1.0
     for date in sorted(groupFiles.iterkeys()):
         progress.setPercentage(int(iteration/float(len(groupFiles))*100))
-        progress.setText("Processing date string: "+date)
+        feedback.setProgressText("Processing date string: "+date)
         loglines.append("Processing date string: "+date)
         params={'input':groupFiles[date], '-n':propagateNulls, 'method':operation, \
                 'range':range, 'GRASS_REGION_CELLSIZE_PARAMETER':cellSize, 'GRASS_REGION_PARAMETER':extent, 'output':outputDir+os.sep+outputFiles[date]}
@@ -166,7 +166,7 @@ else:
         else:
             GrassUtils.endGrassSession()
             raise GeoAlgorithmExecutionException("Unable to execute script \"GRASS r.series for whole directory\". Check Processing log for details.")
-    progress.setText("Finished!")
+    feedback.setProgressText("Finished!")
     loglines.append("Finished!")
     GrassUtils.endGrassSession()
     

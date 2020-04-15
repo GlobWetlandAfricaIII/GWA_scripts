@@ -365,7 +365,7 @@ else:
 
 # Update progress bar
 if not DEBUG:
-    progress.setText("Searching for %s scenes in imagery directory ..." % sensor)
+    feedback.setProgressText("Searching for %s scenes in imagery directory ..." % sensor)
 
 # CREATE SCENES OBJECTS FROM FOUND SCENE DIRECTORIES -------------------------------------------------------------
 scenes = []
@@ -373,7 +373,7 @@ for sD in scene_dirs_IDs:
 
     # Update progress bar
     if not DEBUG:
-        progress.setText("\n%s - %s" % (sD[0], sD[1]))
+        feedback.setProgressText("\n%s - %s" % (sD[0], sD[1]))
 
     try:
         # Create scene objects
@@ -386,16 +386,16 @@ for sD in scene_dirs_IDs:
             scenes.append(new_scene)
         else:
             if not DEBUG:
-                progress.setText("Scene not included: Tile ID doesn't match %s." % tile_ID)
+                feedback.setProgressText("Scene not included: Tile ID doesn't match %s." % tile_ID)
 
     except IOError as e:
         if not DEBUG:
-            progress.setText("WARNING: Scene is skipped. (%s)" % (e))
+            feedback.setProgressText("WARNING: Scene is skipped. (%s)" % (e))
         else:
             print("WARNING: Scene skipped. (%s)" % (e))
     except Exception as e:
         if not DEBUG:
-            progress.setText("ERROR: Scene is skipped. (%s)" % (e))
+            feedback.setProgressText("ERROR: Scene is skipped. (%s)" % (e))
         else:
             print("ERROR: Scene is skipped. (%s)" % e)
 
@@ -463,7 +463,7 @@ elif AOI_type == 1: # 2. user defined extent in canvas
 
     if extent_AOI is None:
         if not DEBUG:
-            progress.setText("Invalid input parameter: User defined extent is invalid.")
+            feedback.setProgressText("Invalid input parameter: User defined extent is invalid.")
         sys.exit(1)
 
     # Create folder where user defined extents are stored as shapefiles
@@ -491,7 +491,7 @@ else: # 3. minimum joint extent of all scenes
 
     if extent_AOI is None:
         if not DEBUG:
-            progress.setText("Invalid input data: Extent of AOI is invalid. "
+            feedback.setProgressText("Invalid input data: Extent of AOI is invalid. "
                              "Check if all scenes overlap each other.")
         else:
             print("Invalid input data: Extent of AOI is invalid. Check if all scenes overlap each other.")
@@ -516,7 +516,7 @@ for sce in scenes:
     except RuntimeWarning as e:
         print("%s not within AOI." % sce.ID)
         if not DEBUG:
-            progress.setText("%s not within AOI." % sce.ID)
+            feedback.setProgressText("%s not within AOI." % sce.ID)
         continue
 
     # Check whether scene has enough valid pixels within AOI
@@ -524,7 +524,7 @@ for sce in scenes:
     # if sce.cloudy > max_cloud_cover:
     #     print "Cloud coverage too high. Scene is skipped."
     #     if not DEBUG:
-    #         progress.setText("Cloud coverage too high. Scene is skipped.")
+    #         feedback.setProgressText("Cloud coverage too high. Scene is skipped.")
     #     continue
 
     scenes_within_extent.append(sce)
@@ -544,7 +544,7 @@ if len(scenes) == 0:
 
 if not DEBUG:
     progress.setPercentage(10)
-    progress.setText("\nFound %s valid %s scenes for processing. "
+    feedback.setProgressText("\nFound %s valid %s scenes for processing. "
                      "\nStarting calculation of spectral indices ..." % (len(scenes), sensor))
 
 #  CALCULATION OF SPECTRAL INDICES ------------------------------------------------------------------------------
@@ -552,7 +552,7 @@ for i, sce in enumerate(scenes):
 
     # Update progress bar
     if not DEBUG:
-        progress.setText("%s" % os.path.basename(sce.ID))
+        feedback.setProgressText("%s" % os.path.basename(sce.ID))
 
     # Calculation of indices
     try:
@@ -594,7 +594,7 @@ for date in unique_dates:
             rsu.createVRT(index_files, vrt_file_name, separate=False)
         except Exception as e:
             if not DEBUG:
-                progress.setText("ERROR: %s" % e)
+                feedback.setProgressText("ERROR: %s" % e)
             else:
                 print e
 

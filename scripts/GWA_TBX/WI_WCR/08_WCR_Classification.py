@@ -89,7 +89,7 @@ if not os.path.exists(path_output_classification):
     os.mkdir(path_output_classification)
 
 if not DEBUG:
-    progress.setText(path_output_classification)
+    feedback.setProgressText(path_output_classification)
 
 # Check start and end dates ------------------------------------------------------------------------
 if start_date != "":
@@ -131,7 +131,7 @@ if len(watermask_files) == 0:
 else:
     print ("Found " + str(len(watermask_files)) + " water mask files.\n")
     if not DEBUG:
-        progress.setText("Found " + str(len(watermask_files)) + " water mask files.\n")
+        feedback.setProgressText("Found " + str(len(watermask_files)) + " water mask files.\n")
 
 # Get joint extent of all watermasks
 joint_extent = rsu.getJointExtent(watermask_files)
@@ -141,7 +141,7 @@ geotrans, proj = rsu.raster2array(watermask_files[0], joint_extent)[1:3]
 # CALCULATE WATER FREQUENCY ----------------------------------------------------------------------------------------
 
 if not DEBUG:
-    progress.setText("Calculating water frequency ...")
+    feedback.setProgressText("Calculating water frequency ...")
 
 # Read in watermasks
 watermasks = []
@@ -167,7 +167,7 @@ water_frequency = (water_occurrence / valid_obs) * 100.
 # CLASSIFICATION -----------------------------------------------------------------------------------
 
 if not DEBUG:
-    progress.setText("Writing classification to file ...")
+    feedback.setProgressText("Writing classification to file ...")
 
 # Minimum water extent
 min_water_extent = np.where(water_frequency > min_extent_thresh, 1, 0)
@@ -254,7 +254,7 @@ if not DEBUG:
         dataobjects.load(dest, os.path.basename(dest))
 
 if not DEBUG:
-    progress.setText('Water Cycle Regime classification done.\n')
+    feedback.setProgressText('Water Cycle Regime classification done.\n')
 else:
     print('Water Cycle Regime classification done.')
 
