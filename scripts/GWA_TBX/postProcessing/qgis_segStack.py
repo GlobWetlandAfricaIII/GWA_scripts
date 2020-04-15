@@ -1,15 +1,18 @@
 import os
 import sys
 from qgis.processing import alg
+
 if os.path.dirname(__file__) not in sys.path:
     sys.path.append(os.path.dirname(__file__))
 import segStack
 
 
-@alg(name="preparepostprocessingstack",
-     label=alg.tr("Stack bands for segmentation"),
-     group="gt",
-     group_label=alg.tr("Generic Tools"))
+@alg(
+    name="preparepostprocessingstack",
+    label=alg.tr("Stack bands for segmentation"),
+    group="gt",
+    group_label=alg.tr("Generic Tools"),
+)
 @alg.input(type=alg.RASTER_LAYER, name="inRst1", label="Input Stack")
 @alg.input(type=alg.BOOL, name="B1", label="Band 1", default=False)
 @alg.input(type=alg.BOOL, name="B2", label="Band 2", default=False)
@@ -22,7 +25,9 @@ import segStack
 @alg.input(type=alg.BOOL, name="B9", label="Band 9", default=False)
 @alg.input(type=alg.BOOL, name="B10", label="Band 10", default=False)
 @alg.input(type=alg.RASTER_LAYER, name="inRst2", label="Classification Raster")
-@alg.input(type=alg.RASTER_LAYER_DEST, name="outPath", label="Output Stack for Segmentation")
+@alg.input(
+    type=alg.RASTER_LAYER_DEST, name="outPath", label="Output Stack for Segmentation"
+)
 def algorithm(instance, parameters, context, feedback, inputs):
     """
     Stack rasters for segmentation
@@ -51,13 +56,15 @@ def algorithm(instance, parameters, context, feedback, inputs):
     if len(outBands) == 0:
         feedback.reportError("ERROR: No bands selected", fatalError=True)
 
-    feedback.setProgressText('Starting preparation of stack...')
+    feedback.setProgressText("Starting preparation of stack...")
 
     # run script
-    segStack.prepSegStack(instance.parameterAsRasterLayer(parameters, "inRst1", context).source(),
-                          outBands,
-                          instance.parameterAsRasterLayer(parameters, "inRst2", context).source(),
-                          instance.parameterAsOutputLayer(parameters, "outPath", context))
+    segStack.prepSegStack(
+        instance.parameterAsRasterLayer(parameters, "inRst1", context).source(),
+        outBands,
+        instance.parameterAsRasterLayer(parameters, "inRst2", context).source(),
+        instance.parameterAsOutputLayer(parameters, "outPath", context),
+    )
 
-    feedback.setProgressText('Finished!')
+    feedback.setProgressText("Finished!")
     return {"outPath": instance.parameterAsOutputLayer(parameters, "outPath", context)}

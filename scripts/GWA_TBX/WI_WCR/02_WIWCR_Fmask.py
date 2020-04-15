@@ -1,15 +1,15 @@
 #  Copyright (c) 2017, GeoVille Information Systems GmbH
 #  All rights reserved.
-# 
+#
 #  Redistribution and use in source and binary forms, with or without
 #  modification, is prohibited for all commercial applications without
 #  licensing by GeoVille GmbH.
-# 
-# 
+#
+#
 # Date created: 06.05.2017
 # Date last modified: 09.06.2017
-# 
-# 
+#
+#
 __author__ = "Johannes Schmid"
 __version__ = "1.0"
 
@@ -32,25 +32,25 @@ import qgis
 import processing
 
 for s in os.listdir(granuledir):
-        s = os.path.join(granuledir, s)
-        if os.path.isdir(s) and s.endswith(".SAFE"):
-                dirs = [x[0] for x in os.walk(s)]
-                for dir in dirs:
-                        if 'IMG_DATA' in dir:
-                                filename = os.listdir(dir)[0]
-                                scene = os.path.basename(filename)[:-8]
-                                output = os.path.join(dir, scene + '_fmask.tif')
+    s = os.path.join(granuledir, s)
+    if os.path.isdir(s) and s.endswith(".SAFE"):
+        dirs = [x[0] for x in os.walk(s)]
+        for dir in dirs:
+            if "IMG_DATA" in dir:
+                filename = os.listdir(dir)[0]
+                scene = os.path.basename(filename)[:-8]
+                output = os.path.join(dir, scene + "_fmask.tif")
 
-                processing.runalg(
-                        "script:fmasksentinel2",
-                        s,
-                        anglesfile,
-                        verbose,
-                        mincloudsize,
-                        cloudbufferdistance,
-                        shadowbufferdistance,
-                        cloudprobthreshold,
-                        nirsnowthreshold,
-                        greensnowthreshold,
-                        output
-                )
+        processing.runalg(
+            "script:fmasksentinel2",
+            s,
+            anglesfile,
+            verbose,
+            mincloudsize,
+            cloudbufferdistance,
+            shadowbufferdistance,
+            cloudprobthreshold,
+            nirsnowthreshold,
+            greensnowthreshold,
+            output,
+        )
