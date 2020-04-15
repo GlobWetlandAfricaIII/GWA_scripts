@@ -1,5 +1,5 @@
-#Definition of inputs and outputs
-#==================================
+# Definition of inputs and outputs
+# ==================================
 ##FMask=group
 ##Landsat Make Angles Image=name
 ##ParameterFile|mtl|MTL file|False|False|txt
@@ -17,10 +17,7 @@ if here not in sys.path:
 
 from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
 
-cmdargs = Namespace(
-        mtl=mtl,
-        templateimg=templateimg,
-        outfile=outfile)
+cmdargs = Namespace(mtl=mtl, templateimg=templateimg, outfile=outfile)
 
-with np.errstate(invalid='ignore'):
+with np.errstate(invalid="ignore"):
     mainRoutine(cmdargs)

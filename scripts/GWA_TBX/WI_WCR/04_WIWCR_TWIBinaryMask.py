@@ -27,7 +27,7 @@ __version__ = "v1"
 ##Create TWI binary mask=name
 ##Wetland Inventory=group
 ##ParameterRaster|path_TWI|TWI
-#OutputDirectory|out_dir|Output directory
+# OutputDirectory|out_dir|Output directory
 
 
 import os, sys
@@ -41,17 +41,19 @@ import RSutils.RSutils as rsu
 DEBUG = False
 
 if not DEBUG:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from processing.core.GeoAlgorithmExecutionException import (
+        GeoAlgorithmExecutionException,
+    )
     from processing.tools import dataobjects
     import qgis
-    
+
 
 out_dir = os.path.dirname(path_TWI)
 print out_dir
 
 attrName = None
 attrVal = None
-extentBuffer=0
+extentBuffer = 0
 
 # Create TWI binary mask ------------------------------------------------
 
@@ -71,20 +73,21 @@ if x == False:
 
 
 # Normalize TWI
-TWI = (TWI-np.nanpercentile(TWI, 1))/(np.nanpercentile(TWI, 99)-np.nanpercentile(TWI, 1))
+TWI = (TWI - np.nanpercentile(TWI, 1)) / (
+    np.nanpercentile(TWI, 99) - np.nanpercentile(TWI, 1)
+)
 
 # Create TWI mask
 TWI_binary = np.where(TWI > 0.4, 0, 1)
 
-#Sieve mask
+# Sieve mask
 TWI_binary = rsu.removeNoise(TWI_binary, 2)
 TWI_binary = rsu.binaryBuffer_negative(TWI_binary, 3)
 
-#Export to file
-x = rsu.array2raster(TWI_binary,geotrans, proj, outfile_binary, gdal.GDT_Byte, 255)
+# Export to file
+x = rsu.array2raster(TWI_binary, geotrans, proj, outfile_binary, gdal.GDT_Byte, 255)
 if x == False:
     raise RuntimeError("Exporting TWI mask failed.")
-
 
 
 del TWI_binary, TWI
@@ -95,10 +98,11 @@ except:
     dataobjects.load(outfile_binary, os.path.basename(outfile_binary))
 
 try:
-    dataobjects.load(path_TWI_filtered, os.path.basename(path_TWI_filtered), isRaster=True)
+    dataobjects.load(
+        path_TWI_filtered, os.path.basename(path_TWI_filtered), isRaster=True
+    )
 except:
     dataobjects.load(path_TWI_filtered, os.path.basename(path_TWI_filtered))
 
 if not DEBUG:
     feedback.setProgressText("TWI binary mask done.")
-

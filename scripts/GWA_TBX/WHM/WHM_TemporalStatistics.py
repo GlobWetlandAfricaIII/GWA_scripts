@@ -31,54 +31,106 @@ ymin = extent.yMinimum()
 ymax = extent.yMaximum()
 # Run algorithm and set relevant parameters
 
-mean = processing.runalg("grass7:r.series",
-                  {"input": rlist,
-                   "-n": False,
-                   "method": 0,
-                   "range": '-10000000000,10000000000',
-                   "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
-                   "GRASS_REGION_CELLSIZE_PARAMETER": 0,
-                   "output": None})
-                   
-range = processing.runalg("grass7:r.series",
-                  {"input": rlist,
-                   "-n": False,
-                   "method": 9,
-                   "range": '-10000000000,10000000000',
-                   "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
-                   "GRASS_REGION_CELLSIZE_PARAMETER": 0,
-                   "output": None})
-if n < 3: 
+mean = processing.runalg(
+    "grass7:r.series",
+    {
+        "input": rlist,
+        "-n": False,
+        "method": 0,
+        "range": "-10000000000,10000000000",
+        "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
+        "GRASS_REGION_CELLSIZE_PARAMETER": 0,
+        "output": None,
+    },
+)
+
+range = processing.runalg(
+    "grass7:r.series",
+    {
+        "input": rlist,
+        "-n": False,
+        "method": 9,
+        "range": "-10000000000,10000000000",
+        "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
+        "GRASS_REGION_CELLSIZE_PARAMETER": 0,
+        "output": None,
+    },
+)
+if n < 3:
     del rlist
-    gm.main(['', '-o', output, '-of', 'GTiff', '-separate', '-a_nodata', '-9999', '-ot', 'Int16', mean['output'], range['output']])
+    gm.main(
+        [
+            "",
+            "-o",
+            output,
+            "-of",
+            "GTiff",
+            "-separate",
+            "-a_nodata",
+            "-9999",
+            "-ot",
+            "Int16",
+            mean["output"],
+            range["output"],
+        ]
+    )
 
 else:
-    min = processing.runalg("grass7:r.series",
-                  {"input": rlist,
-                   "-n": False,
-                   "method": 3,
-                   "range": '-10000000000,10000000000',
-                   "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
-                   "GRASS_REGION_CELLSIZE_PARAMETER": 0,
-                   "output": None})
-                   
-    max = processing.runalg("grass7:r.series",
-                  {"input": rlist,
-                   "-n": False,
-                   "method": 6,
-                   "range": '-10000000000,10000000000',
-                   "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
-                   "GRASS_REGION_CELLSIZE_PARAMETER": 0,
-                   "output": None})
-    sd = processing.runalg("grass7:r.series",
-                  {"input": rlist,
-                   "-n": False,
-                   "method": 8,
-                   "range": '-10000000000,10000000000',
-                   "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
-                   "GRASS_REGION_CELLSIZE_PARAMETER": 0,
-                   "output": None})
-                   
-    del rlist               
-    gm.main(['', '-o', output, '-of', 'GTiff', '-separate', '-a_nodata', '-9999', '-ot', 'Int16', mean['output'], max['output'], min['output'], range['output'], sd['output']])
-    
+    min = processing.runalg(
+        "grass7:r.series",
+        {
+            "input": rlist,
+            "-n": False,
+            "method": 3,
+            "range": "-10000000000,10000000000",
+            "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
+            "GRASS_REGION_CELLSIZE_PARAMETER": 0,
+            "output": None,
+        },
+    )
+
+    max = processing.runalg(
+        "grass7:r.series",
+        {
+            "input": rlist,
+            "-n": False,
+            "method": 6,
+            "range": "-10000000000,10000000000",
+            "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
+            "GRASS_REGION_CELLSIZE_PARAMETER": 0,
+            "output": None,
+        },
+    )
+    sd = processing.runalg(
+        "grass7:r.series",
+        {
+            "input": rlist,
+            "-n": False,
+            "method": 8,
+            "range": "-10000000000,10000000000",
+            "GRASS_REGION_PARAMETER": "%f,%f,%f,%f" % (xmin, xmax, ymin, ymax),
+            "GRASS_REGION_CELLSIZE_PARAMETER": 0,
+            "output": None,
+        },
+    )
+
+    del rlist
+    gm.main(
+        [
+            "",
+            "-o",
+            output,
+            "-of",
+            "GTiff",
+            "-separate",
+            "-a_nodata",
+            "-9999",
+            "-ot",
+            "Int16",
+            mean["output"],
+            max["output"],
+            min["output"],
+            range["output"],
+            sd["output"],
+        ]
+    )

@@ -1,5 +1,5 @@
-#Definition of inputs and outputs
-#==================================
+# Definition of inputs and outputs
+# ==================================
 ##FMask=group
 ##Sentinel 2 Make Angles Image=name
 ##ParameterFile|infile|Input sentinel-2 tile metafile|False|False|xml
@@ -16,9 +16,7 @@ if here not in sys.path:
 
 from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine
 
-cmdargs = Namespace(
-        infile=infile,
-        outfile=outfile)
+cmdargs = Namespace(infile=infile, outfile=outfile)
 
-with np.errstate(invalid='ignore'):
+with np.errstate(invalid="ignore"):
     mainRoutine(cmdargs)

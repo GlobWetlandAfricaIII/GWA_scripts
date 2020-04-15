@@ -5,6 +5,7 @@ import numpy as np
 from qgis.processing import alg
 from processing.tools import dataobjects
 
+
 @alg(
     name="landsatindicies",
     label=alg.tr("Landsat Indices"),
@@ -20,12 +21,10 @@ from processing.tools import dataobjects
 @alg.input(
     type=alg.FOLDER_DEST,
     name="outputDirectory",
-    label="Folder to save the stack of Indices"
+    label="Folder to save the stack of Indices",
 )
 @alg.input(
-    type=alg.RASTER_LAYER_DEST,
-    name="output",
-    label="Name for Index Stack",
+    type=alg.RASTER_LAYER_DEST, name="output", label="Name for Index Stack",
 )
 def fmasklandsat(instance, parameters, context, feedback, inputs):
     """ landsat indicies """
@@ -76,8 +75,8 @@ def fmasklandsat(instance, parameters, context, feedback, inputs):
         # Stack and write to disk
         # get base filename and combine with outpath
         sName = os.path.splitext(os.path.basename(inRst))[-2]
-        stkPath = os.path.join(outDir, sName + '_indices.tif')
-        drv = gdal.GetDriverByName('GTiff')
+        stkPath = os.path.join(outDir, sName + "_indices.tif")
+        drv = gdal.GetDriverByName("GTiff")
         outTif = drv.Create(stkPath, xsize, ysize, 4, gdal.GDT_Int16)
         outTif.SetProjection(proj)
         outTif.SetGeoTransform(geotransform)
@@ -88,7 +87,10 @@ def fmasklandsat(instance, parameters, context, feedback, inputs):
         outTif = None
         return stkPath
 
-    feedback.pushConsoleInfo('Starting index calculation...')
-    out_file = landsat_indices(instance.parameterAsString(parameters, 'input', context), instance.parameterAsString(parameters, 'outputDirectory', context))
+    feedback.pushConsoleInfo("Starting index calculation...")
+    out_file = landsat_indices(
+        instance.parameterAsString(parameters, "input", context),
+        instance.parameterAsString(parameters, "outputDirectory", context),
+    )
     dataobjects.load(out_file, isRaster=True)
-    feedback.pushConsoleInfo('Finished writing to disk...')
+    feedback.pushConsoleInfo("Finished writing to disk...")

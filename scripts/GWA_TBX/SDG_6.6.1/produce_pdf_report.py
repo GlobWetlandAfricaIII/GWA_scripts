@@ -23,10 +23,19 @@ import pandas as pd
 import xml.etree.ElementTree as et
 
 from qgis.PyQt.QtXml import QDomDocument
-from qgis.core import QgsComposition, QgsFillSymbolV2, QgsRuleBasedRendererV2, QgsComposerHtml, QgsLegendRenderer, QgsComposerLegendStyle
+from qgis.core import (
+    QgsComposition,
+    QgsFillSymbolV2,
+    QgsRuleBasedRendererV2,
+    QgsComposerHtml,
+    QgsLegendRenderer,
+    QgsComposerLegendStyle,
+)
 from qgis.utils import iface
 from processing.tools import dataobjects
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+from processing.core.GeoAlgorithmExecutionException import (
+    GeoAlgorithmExecutionException,
+)
 
 # Parse raster legend to obtain names of the landcover classes
 raster_classes = OrderedDict()
@@ -36,9 +45,14 @@ style_XML = style_manager.style(style_manager.currentStyle()).xmlData()
 xml_root = et.fromstring(style_XML)
 shader = xml_root.findall("./pipe/rasterrenderer/rastershader/colorrampshader")
 if not shader:
-    raise GeoAlgorithmExecutionException("Raster must have singleband pseudocolor rendering!")
+    raise GeoAlgorithmExecutionException(
+        "Raster must have singleband pseudocolor rendering!"
+    )
 for item in shader[0].iter("item"):
-    raster_classes[item.get("value")] = {"label": item.get("label"), "color": item.get("color")}
+    raster_classes[item.get("value")] = {
+        "label": item.get("label"),
+        "color": item.get("color"),
+    }
 
 # Read the statistics from the json file and for each region produce a table showing land cover
 # areas in the reference period and area change in the target period
@@ -47,7 +61,10 @@ with open(json_file, "r") as fp:
 reference_period = data["metadata"][0]["reference_year"]
 report_tables = {}
 lc_labels = [lc["label"] for lc in raster_classes.values()]
-columns = ["Area in "+reference_period+" (km<sup>2</sup>)", "Area change in "+str(period)+" (%)"]
+columns = [
+    "Area in " + reference_period + " (km<sup>2</sup>)",
+    "Area change in " + str(period) + " (%)",
+]
 for region in data["values_as_km2"]:
     if region["yyyy"] == reference_period:
         df = pd.DataFrame(columns=columns, index=lc_labels, dtype=np.float32)
@@ -86,8 +103,8 @@ atlas_map.setKeepLayerSet(True)
 atlas_legend = composition.getComposerItemById("atlas_legend")
 raster_legend = atlas_legend.modelV2().rootGroup().addLayer(raster_layer)
 QgsLegendRenderer.setNodeLegendStyle(raster_legend, QgsComposerLegendStyle.Hidden)
-atlas_legend.updateLegend ()
-#atlas_legend.refreshLayerLegend(raster_legend)
+atlas_legend.updateLegend()
+# atlas_legend.refreshLayerLegend(raster_legend)
 stats_table = composition.getComposerItemById("stats_table").multiFrame()
 stats_table.setContentMode(QgsComposerHtml.ManualHtml)
 title_label = composition.getComposerItemById("title_label")
@@ -96,14 +113,22 @@ description_label = composition.getComposerItemById("description_label")
 description_text = description_label.text()
 
 # Set a rule based style to highlight the atlas feature
-normal_style = QgsFillSymbolV2().createSimple({"color": "#000000",
-                                               "color_border": "#000000",
-                                               "width_border": "0.25",
-                                               "style": "no"})
-highlight_style = QgsFillSymbolV2().createSimple({"color": "#000000",
-                                                  "color_border": "#ff0000",
-                                                  "width_border": "0.85",
-                                                  "style": "no"})
+normal_style = QgsFillSymbolV2().createSimple(
+    {
+        "color": "#000000",
+        "color_border": "#000000",
+        "width_border": "0.25",
+        "style": "no",
+    }
+)
+highlight_style = QgsFillSymbolV2().createSimple(
+    {
+        "color": "#000000",
+        "color_border": "#ff0000",
+        "width_border": "0.85",
+        "style": "no",
+    }
+)
 highlight_rule = QgsRuleBasedRendererV2.Rule(highlight_style)
 highlight_rule.setFilterExpression("$id = @atlas_featureid")
 highlight_renderer = QgsRuleBasedRendererV2(normal_style)
@@ -120,15 +145,17 @@ for i in range(atlas.numFeatures()):
     if region_id not in report_tables.keys():
         continue
     styled_df = report_tables[region_id].style.format("{:.2f}")
-    html = styled_df.set_table_styles([{"selector": ", table",
-                                        "props": [('border-collapse', 'collapse'),
-                                                  ('border-spacing', '0')]},
-                                       {"selector": ", th, td",
-                                        "props": [('border', '1px solid black')]},
-                                       {"selector": ", td",
-                                        "props": [('text-align', 'right')]},
-                                       {"selector": ", th",
-                                        "props": [('text-align', 'center')]}]).render()
+    html = styled_df.set_table_styles(
+        [
+            {
+                "selector": ", table",
+                "props": [("border-collapse", "collapse"), ("border-spacing", "0")],
+            },
+            {"selector": ", th, td", "props": [("border", "1px solid black")]},
+            {"selector": ", td", "props": [("text-align", "right")]},
+            {"selector": ", th", "props": [("text-align", "center")]},
+        ]
+    ).render()
     stats_table.setHtml(html)
     stats_table.loadHtml()
     region_name = atlas.feature().attribute("aoi_name")
@@ -137,12 +164,16 @@ for i in range(atlas.numFeatures()):
     description = description.replace("%REF_PERIOD%", reference_period)
     description = description.replace("%TARGET_PERIOD%", str(period))
     description_label.setText(description)
-    filename = os.path.splitext(report_pdf_file)[0] + "_" + region_id +\
-               os.path.splitext(report_pdf_file)[1]
+    filename = (
+        os.path.splitext(report_pdf_file)[0]
+        + "_"
+        + region_id
+        + os.path.splitext(report_pdf_file)[1]
+    )
     composition.exportAsPDF(filename)
 atlas.endRender()
 
 # The two lines below should reset the vector style to the original but they crash QGIS so for
 # now they are commented out.
-#vector_layer.setRendererV2(original_renderer)
-#vector_layer.triggerRepaint()
+# vector_layer.setRendererV2(original_renderer)
+# vector_layer.triggerRepaint()

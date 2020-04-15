@@ -1,5 +1,5 @@
-#Definition of inputs and outputs
-#==================================
+# Definition of inputs and outputs
+# ==================================
 ##FMask=group
 ##Landsat Saturation Mask=name
 ##ParameterFile|infile|Input raw DN radiance image|False|False
@@ -18,10 +18,7 @@ if here not in sys.path:
 
 from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
 
-cmdargs = Namespace(
-        infile=infile,
-        mtl=mtl,
-        outfile=outfile)
+cmdargs = Namespace(infile=infile, mtl=mtl, outfile=outfile)
 
-with np.errstate(invalid='ignore'):
+with np.errstate(invalid="ignore"):
     mainRoutine(cmdargs)
