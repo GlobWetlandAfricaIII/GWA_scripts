@@ -53,7 +53,7 @@ si = sub.STARTUPINFO()
 si.dwFlags |= sub.STARTF_USESHOWWINDOW
 
 if not debug:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from qgis.core import QgsProcessingException
     import qgis
     here = os.path.dirname(scriptDescriptionFile)
     sys.path.append(os.path.join(here))
@@ -280,44 +280,44 @@ if not debug:
 
 # AOI
 if not path_AOI.endswith(".shp"):
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Shapefile containing AOI' is not a shapefile (must have ending .shp). Please specify the path to the shapefile containing the AOI or choose a different type of AOI." )
+    raise QgsProcessingException("Invalid input parameter: 'Shapefile containing AOI' is not a shapefile (must have ending .shp). Please specify the path to the shapefile containing the AOI or choose a different type of AOI." )
     sys.exit(1)
 if not os.path.exists(path_AOI):
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Shapefile containing AOI' was not found. Please specify the correct path to the shapefile or choose a different type of AOI." )
+    raise QgsProcessingException("Invalid input parameter: 'Shapefile containing AOI' was not found. Please specify the correct path to the shapefile or choose a different type of AOI." )
     sys.exit(1)
 
 
 # Imagery
 if not os.path.exists(path_imagery):
     print "Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery)
+    raise QgsProcessingException("Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery)
 
 # Output directory
 if not os.path.exists(pathOUT):
     print "Invalid input parameter: 'Output directory' not found: %s" % path_imagery
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Output directory' not found: %s" % path_imagery)
+    raise QgsProcessingException("Invalid input parameter: 'Output directory' not found: %s" % path_imagery)
 
 
 
 # Check start and end dates ---------------------------------------------------------------------------------------------------------------------------------
 if startDate == "":
-    raise GeoAlgorithmExecutionException("Please fill in a valid start date.")
+    raise QgsProcessingException("Please fill in a valid start date.")
 else:
     try:
         startDate_format = datetime.strptime(startDate, "%Y%m%d")
     except:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'Start date' is not valid.")
+        raise QgsProcessingException("Invalid input parameter: Format of 'Start date' is not valid.")
 
 if endDate == "":
-    raise GeoAlgorithmExecutionException("Please fill in a valid end date.")
+    raise QgsProcessingException("Please fill in a valid end date.")
 else:
     try:
         endDate_format = datetime.strptime(endDate, "%Y%m%d")
     except:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'End date' is not valid.")
+        raise QgsProcessingException("Invalid input parameter: Format of 'End date' is not valid.")
 
 if endDate_format < startDate_format:
-    raise GeoAlgorithmExecutionException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
+    raise QgsProcessingException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
 
 
 # Check scenes an start pre-processing ------------------------------------------------------------------------------------------------------------------------
@@ -329,7 +329,7 @@ zips_filtered = getScenes4Period(startDate, endDate, path_imagery)
 
 if len(zips_filtered) == 0:
     if not debug:
-        raise GeoAlgorithmExecutionException(
+        raise QgsProcessingException(
             "No scenes found within the given time period. Adjust the start and end date or download scenes for this time period.")
     else:
         print "No Scenes found within the given time period. Adjust the start and end date or download scenes for this time period."
@@ -343,7 +343,7 @@ for idx, zip in enumerate(zips_filtered):
 
     path_zip = os.path.join(path_imagery, zip)
     if len(zips_filtered) > 5 and (zip == zips_filtered[5]):
-     raise GeoAlgorithmExecutionException(
+     raise QgsProcessingException(
          "You reached the maximum number of processable scenes! Please start processing with new scenes.")
      #sys.exit(1)
     if os.path.isfile(path_zip):

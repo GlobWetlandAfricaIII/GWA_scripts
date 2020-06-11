@@ -41,7 +41,7 @@ import RSutils.RSutils as rsu
 DEBUG = False
 
 if not DEBUG:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from qgis.core import QgsProcessingException
     from processing.tools import dataobjects
     import qgis
     

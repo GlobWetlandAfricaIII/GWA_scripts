@@ -37,7 +37,7 @@ import datetime as dt
 import subprocess
 
 if not DEBUG:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from qgis.core import QgsProcessingException
     from processing.tools import dataobjects
     import qgis
 
@@ -85,20 +85,20 @@ def fuse_watermasks(watermask_opt, watermask_opt_max, watermask_sar):
 # Directory containing watermasks
 if not os.path.exists(path_watermasks_opt):
     print "Invalid input parameter: 'Directory containing watermasks' not found: %s" % path_watermasks_opt
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Directory containing watermasks' "
+    raise QgsProcessingException("Invalid input parameter: 'Directory containing watermasks' "
                                          "not found: %s" % path_watermasks_opt)
 
 # Directory containing watermasks
 if not os.path.exists(path_output):
     print "Invalid input parameter: 'Output directory' not found: %s" % path_output
-    raise GeoAlgorithmExecutionException("Invalid input parameter: 'Output directory' "
+    raise QgsProcessingException("Invalid input parameter: 'Output directory' "
                                          "not found: %s" % path_output)
 
 # Search for potential water mask
 path_watermask_opt_max = fnmatch.filter(os.listdir(path_watermasks_opt), "*_potential_watermask.tif")
 if len(path_watermasks_opt) == 0:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: Potential watermask not found within %s."
+        raise QgsProcessingException("Invalid input parameter: Potential watermask not found within %s."
                                              % path_watermasks_opt)
 else:
     path_watermask_opt_max = os.path.join(path_watermasks_opt, path_watermask_opt_max[0])
@@ -118,7 +118,7 @@ if start_date != "":
     try:
         start_date = dt.datetime.strptime(start_date, "%Y%m%d")
     except:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'Start date' is not valid.")
+        raise QgsProcessingException("Invalid input parameter: Format of 'Start date' is not valid.")
 else:
     start_date = dt.datetime.strptime("19000101", "%Y%m%d")
 
@@ -126,12 +126,12 @@ if end_date != "":
     try:
         end_date = dt.datetime.strptime(end_date, "%Y%m%d")
     except:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'End date' is not valid.")
+        raise QgsProcessingException("Invalid input parameter: Format of 'End date' is not valid.")
 else:
     end_date = dt.datetime.strptime("30000101", "%Y%m%d")
 
 if end_date < start_date:
-    raise GeoAlgorithmExecutionException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
+    raise QgsProcessingException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
 
 # START PROCESSING -----------------------------------------------------------------------------------------------
 
@@ -139,7 +139,7 @@ if end_date < start_date:
 watermask_files = fnmatch.filter(os.listdir(path_watermasks_opt), "*water_mask.tif")
 if len(watermask_files) == 0:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
+        raise QgsProcessingException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
     else:
         print("Invalid input data: No optical water masks found.")
         sys.exit(1)
@@ -172,7 +172,7 @@ if not proj_sar.IsSame(proj_opt) or (geotrans_opt[1] != pix_size_sar):
             subprocess.check_call(cmd, shell=True)
         except subprocess.CalledProcessError as e:
             if not DEBUG:
-                raise GeoAlgorithmExecutionException("Error: SAR water mask could not be reprojected. \n %s " % e)
+                raise QgsProcessingException("Error: SAR water mask could not be reprojected. \n %s " % e)
 
     path_watermask_sar = path_watermask_sar_reprojected
 
@@ -183,7 +183,7 @@ opt_watermask_files = [os.path.join(path_watermasks_opt, f) for f in watermask_f
 extent_AOI = rsu.getJointExtent(opt_watermask_files + [path_watermask_sar])
 if extent_AOI is None:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("Error: SAR water mask and optical water masks are not intersecting.")
+        raise QgsProcessingException("Error: SAR water mask and optical water masks are not intersecting.")
     else:
         print("Error: SAR water mask and optical water masks are not intersecting." )
         sys.exit(1)
@@ -222,7 +222,7 @@ for wm_file in watermask_files:
     res = rsu.array2raster(fused_watermask, geotrans, proj, path_output_file, gdal.GDT_Float32, 255)
     if res != True:
         if not DEBUG:
-            raise GeoAlgorithmExecutionException(res)
+            raise QgsProcessingException(res)
         else:
             print(res)
             sys.exit(1)

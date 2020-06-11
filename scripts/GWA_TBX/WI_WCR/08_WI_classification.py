@@ -38,7 +38,7 @@ import time
 starttime = time.time()
 
 if not DEBUG:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from qgis.core import QgsProcessingException
     from processing.tools import dataobjects
     here = os.path.dirname(scriptDescriptionFile)
 
@@ -72,12 +72,12 @@ def calculate_frequency(watermasks):
 
 if not os.path.exists(path_masks):
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("Invalid input parameters: 'Directory containing water masks' does not exist.")
+        raise QgsProcessingException("Invalid input parameters: 'Directory containing water masks' does not exist.")
     print("Invalid input parameters: 'Directory containing water masks' does not exist.")
 
 if not os.path.exists(path_output):
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("Invalid input parameters: 'Output directory' does not exist.")
+        raise QgsProcessingException("Invalid input parameters: 'Output directory' does not exist.")
     print("Invalid input parameters: 'Output directory' does not exist.")
 
 title = os.path.basename(path_masks)
@@ -98,7 +98,7 @@ if start_date != "":
         start_date = dt.datetime.strptime(start_date, "%Y%m%d")
     except:
         if not DEBUG:
-            raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'Start date' is not valid.")
+            raise QgsProcessingException("Invalid input parameter: Format of 'Start date' is not valid.")
 else:
     start_date = dt.datetime.strptime("19000101", "%Y%m%d")
 
@@ -107,12 +107,12 @@ if end_date != "":
         end_date = dt.datetime.strptime(end_date, "%Y%m%d")
     except:
         if not DEBUG:
-            raise GeoAlgorithmExecutionException("Invalid input parameter: Format of 'End date' is not valid.")
+            raise QgsProcessingException("Invalid input parameter: Format of 'End date' is not valid.")
 else:
     end_date = dt.datetime.strptime("30000101", "%Y%m%d")
 
 if end_date < start_date:
-    raise GeoAlgorithmExecutionException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
+    raise QgsProcessingException("Invalid input parameters: 'Start date'  must be earlier than 'End date'.")
 
 
 # WATER OCCURRENCE AND FREQUENCY
@@ -132,7 +132,7 @@ for f in fnmatch.filter(os.listdir(path_masks), "*_water_mask.tif"):
 # Check whether masks exist
 if len(watermask_files) == 0:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException("No water masks found")
+        raise QgsProcessingException("No water masks found")
     else:
         print("No water masks found.")
 else:
@@ -324,7 +324,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(valid_obs, geotrans, proj, dest, gdal.GDT_Byte, 255)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -335,7 +335,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(water_frequency, geotrans, proj, dest, gdal.GDT_Float32, -9999)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -357,7 +357,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(wet_frequency, geotrans, proj, dest, gdal.GDT_Float32, -9999)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -380,7 +380,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(dveg_frequency, geotrans, proj, dest, gdal.GDT_Float32, -9999)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -395,7 +395,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(sveg_frequency, geotrans, proj, dest, gdal.GDT_Float32, -9999)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -410,7 +410,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(soil_frequency, geotrans, proj, dest, gdal.GDT_Float32, -9999)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -425,7 +425,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(WetProbClass, geotrans, proj, dest, gdal.GDT_Byte, 255)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)
@@ -447,7 +447,7 @@ dest = os.path.join(path_output_classification, file_name + '.tif')
 res = rsu.array2raster(WWPI, geotrans, proj, dest, gdal.GDT_Byte, 255)
 if res != True:
     if not DEBUG:
-        raise GeoAlgorithmExecutionException(res)
+        raise QgsProcessingException(res)
     else:
         print(res)
         sys.exit(1)

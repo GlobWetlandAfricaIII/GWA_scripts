@@ -30,7 +30,7 @@ import fnmatch
 import time
 
 if not debug:
-    from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+    from qgis.core import QgsProcessingException
     import cv2
 
 # Functions --------------------------------------------------------
@@ -49,18 +49,18 @@ def writeFile(filename,geotransform,geoprojection,data):
 
 if not water and not wetness:
     if not debug:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: At least one of the parameters 'Water' or 'Wetness' must be activated.")
+        raise QgsProcessingException("Invalid input parameter: At least one of the parameters 'Water' or 'Wetness' must be activated.")
 
 # Check input directory
 if not os.path.exists(inDir):
     if not debug:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: 'Directory containing SAR files' does not exist.")
+        raise QgsProcessingException("Invalid input parameter: 'Directory containing SAR files' does not exist.")
         sys.exit(1)
 
 # Output path
 if not os.path.exists(path_output):
     if not debug:
-        raise GeoAlgorithmExecutionException("Invalid input parameter: 'Output directory' does not exist.")
+        raise QgsProcessingException("Invalid input parameter: 'Output directory' does not exist.")
         sys.exit(1)
 
 # Create output directory
@@ -79,7 +79,7 @@ for root, dirs, files in os.walk(inDir):
 
 if len(SARfiles) == 0:
     if not debug:
-        raise GeoAlgorithmExecutionException("Runtime Error: No SAR files found.")
+        raise QgsProcessingException("Runtime Error: No SAR files found.")
 
 for i,inFile in enumerate(SARfiles):
     print("Processing %s of %s files" % (i+1, len(SARfiles)))

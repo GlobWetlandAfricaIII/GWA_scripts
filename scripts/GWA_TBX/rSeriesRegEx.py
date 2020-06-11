@@ -23,7 +23,7 @@ import datetime
 from PyQt4.QtGui import *
 from processing.core.ProcessingLog import ProcessingLog
 from processing.algs.grass.GrassUtils import GrassUtils
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+from qgis.core import QgsProcessingException
 
 
 def convertDatetoDoy(dateString, lengthYearString, lengthMonthString, lengthDayString):
@@ -86,7 +86,7 @@ def getFiles(dataDir, filenameFormat, outputFileFormat, groupFiles, outputFiles,
     match = re.search(regex, filenameFormat)
     if not match:
         ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No match for date string in filename format!")
-        raise GeoAlgorithmExecutionException("No match for date string in filename format!")
+        raise QgsProcessingException("No match for date string in filename format!")
     startDateString = match.start(1)
     lengthDateString = match.end(1)-match.start(1)
     # if grouping by format the regex has to be different to when grouping by date
@@ -148,7 +148,7 @@ os.chdir(oldDir)
 
 if len(groupFiles) == 0 or len(outputFiles) == 0:
     ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No matching files found! r.series will not be executed.")
-    raise GeoAlgorithmExecutionException("No matching files found! r.series will not be executed.")
+    raise QgsProcessingException("No matching files found! r.series will not be executed.")
 else:
     # run r.series for each group of files
     GrassUtils.startGrassSession()
@@ -165,7 +165,7 @@ else:
             iteration +=1
         else:
             GrassUtils.endGrassSession()
-            raise GeoAlgorithmExecutionException("Unable to execute script \"GRASS r.series for whole directory\". Check Processing log for details.")
+            raise QgsProcessingException("Unable to execute script \"GRASS r.series for whole directory\". Check Processing log for details.")
     feedback.setProgressText("Finished!")
     loglines.append("Finished!")
     GrassUtils.endGrassSession()
