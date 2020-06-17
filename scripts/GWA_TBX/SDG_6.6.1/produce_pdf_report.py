@@ -23,7 +23,7 @@ import pandas as pd
 import xml.etree.ElementTree as et
 
 from qgis.PyQt.QtXml import QDomDocument
-from qgis.core import QgsPrintLayout, QgsFillSymbol, QgsRuleBasedRenderer, QgsComposerHtml, QgsLegendRenderer, QgsComposerLegendStyle
+from qgis.core import QgsPrintLayout, QgsFillSymbol, QgsRuleBasedRenderer, QgsLayoutItemHtml, QgsLegendRenderer, QgsLegendStyle 
 from qgis.utils import iface
 from processing.tools import dataobjects
 from qgis.core import QgsProcessingException
@@ -102,11 +102,11 @@ def sdg661producereportforagivenperiod(instance, parameters, context, feedback, 
     atlas_map.setKeepLayerSet(True)
     atlas_legend = composition.getComposerItemById("atlas_legend")
     raster_legend = atlas_legend.modelV2().rootGroup().addLayer(raster_layer)
-    QgsLegendRenderer.setNodeLegendStyle(raster_legend, QgsComposerLegendStyle.Hidden)
+    QgsLegendRenderer.setNodeLegendStyle(raster_legend, QgsLegendStyle .Hidden)
     atlas_legend.updateLegend ()
     #atlas_legend.refreshLayerLegend(raster_legend)
     stats_table = composition.getComposerItemById("stats_table").multiFrame()
-    stats_table.setContentMode(QgsComposerHtml.ManualHtml)
+    stats_table.setContentMode(QgsLayoutItemHtml.ManualHtml)
     title_label = composition.getComposerItemById("title_label")
     title_text = title_label.text()
     description_label = composition.getComposerItemById("description_label")
