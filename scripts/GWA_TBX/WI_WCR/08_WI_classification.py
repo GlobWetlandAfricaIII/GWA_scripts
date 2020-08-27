@@ -40,9 +40,7 @@ starttime = time.time()
 if not DEBUG:
     from qgis.core import QgsProcessingException
     from processing.tools import dataobjects
-    here = os.path.dirname(scriptDescriptionFile)
-
-qmlDir = os.path.join(here, 'data', 'qml')
+    
 
 import RSutils.RSutils as rsu
 

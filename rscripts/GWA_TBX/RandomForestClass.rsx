@@ -6,8 +6,8 @@
 ##Output_Raster=output raster
 
 # Advanced parameters
-##Number_of_Cores_for_Processing=advanced number 2
-##Number_of_Trees=advanced number 150
+##Number_of_Cores_for_Processing= number 2
+##Number_of_Trees= number 150
 
 # TODO: make sure that the training date crs matches the raster crs. project training data if necessary.
 # TODO: remove any NA values in training data. Give warning if some training data is outside extent.

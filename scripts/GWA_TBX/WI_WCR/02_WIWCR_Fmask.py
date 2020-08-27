@@ -49,26 +49,26 @@ from qgis.processing import alg
 @alg.input(type=alg.FILE_DEST, name="outfile", label="Outfile")
 def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback, inputs):
     """ maskforsentinel2forwetlandinventory """
-        for s in os.listdir(granuledir):
-                s = os.path.join(granuledir, s)
-                if os.path.isdir(s) and s.endswith(".SAFE"):
-                        dirs = [x[0] for x in os.walk(s)]
-                        for dir in dirs:
-                                if 'IMG_DATA' in dir:
-                                        filename = os.listdir(dir)[0]
-                                        scene = os.path.basename(filename)[:-8]
-                                        output = os.path.join(dir, scene + '_fmask.tif')
+    for s in os.listdir(granuledir):
+            s = os.path.join(granuledir, s)
+            if os.path.isdir(s) and s.endswith(".SAFE"):
+                    dirs = [x[0] for x in os.walk(s)]
+                    for dir in dirs:
+                            if 'IMG_DATA' in dir:
+                                    filename = os.listdir(dir)[0]
+                                    scene = os.path.basename(filename)[:-8]
+                                    output = os.path.join(dir, scene + '_fmask.tif')
 
-                        processing.runalg(
-                                "script:fmasksentinel2",
-                                s,
-                                anglesfile,
-                                verbose,
-                                mincloudsize,
-                                cloudbufferdistance,
-                                shadowbufferdistance,
-                                cloudprobthreshold,
-                                nirsnowthreshold,
-                                greensnowthreshold,
-                                output
-                        )
+                    processing.runalg(
+                            "script:fmasksentinel2",
+                            s,
+                            anglesfile,
+                            verbose,
+                            mincloudsize,
+                            cloudbufferdistance,
+                            shadowbufferdistance,
+                            cloudprobthreshold,
+                            nirsnowthreshold,
+                            greensnowthreshold,
+                            output
+                    )

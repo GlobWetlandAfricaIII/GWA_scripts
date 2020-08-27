@@ -84,13 +84,13 @@ def fuse_watermasks(watermask_opt, watermask_opt_max, watermask_sar):
 
 # Directory containing watermasks
 if not os.path.exists(path_watermasks_opt):
-    print "Invalid input parameter: 'Directory containing watermasks' not found: %s" % path_watermasks_opt
+#    print "Invalid input parameter: 'Directory containing watermasks' not found: %s" % path_watermasks_opt
     raise QgsProcessingException("Invalid input parameter: 'Directory containing watermasks' "
                                          "not found: %s" % path_watermasks_opt)
 
 # Directory containing watermasks
 if not os.path.exists(path_output):
-    print "Invalid input parameter: 'Output directory' not found: %s" % path_output
+#    print "Invalid input parameter: 'Output directory' not found: %s" % path_output
     raise QgsProcessingException("Invalid input parameter: 'Output directory' "
                                          "not found: %s" % path_output)
 

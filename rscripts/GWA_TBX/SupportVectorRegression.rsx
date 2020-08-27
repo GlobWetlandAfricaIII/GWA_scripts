@@ -5,11 +5,11 @@
 ##Mask_Raster=optional raster
 
 # Advanced parameters
-##Number_of_Cores_for_Processing=advanced number 2
-##Gamma_for_Radial_Kernel=advanced,optional number
-##Cost_for_Radial_Kernel=advanced, number 10
+##Number_of_Cores_for_Processing= number 2
+##Gamma_for_Radial_Kernel=optional number
+##Cost_for_Radial_Kernel=number 10
 
-##Output_Raster = output raster
+##Output_Raster= output raster
 
 # TODO: make sure that the training date crs matches the raster crs. project training data if necessary.
 

@@ -8,7 +8,7 @@ from qgis.core import *
 from PyQt5.QtCore import *
 
 @alg(
-    name="pg04waterqualitparameters00olcisubsetting",
+    name="pg04waterqualityparameters00olcisubsetting",
     label=alg.tr("PG04_WaterQualityParameters_00_OLCI_Subsetting"),
     group="bc",
     group_label=alg.tr("BC")

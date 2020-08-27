@@ -303,13 +303,13 @@ def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback,
 
     # Directory containing imagery
     if not os.path.exists(path_imagery):
-        print "Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery
+    #    print "Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery
         raise QgsProcessingException("Invalid input parameter: 'Directory containing imagery' "
                                             "not found: %s" % path_imagery)
 
     # Output directory
     if not os.path.exists(path_output):
-        print "Invalid input parameter: 'Output directory' not found: %s" % path_output
+    #    print "Invalid input parameter: 'Output directory' not found: %s" % path_output
         raise QgsProcessingException("Invalid input parameter: 'Output directory' "
                                             "not found: %s" % path_output)
 
@@ -423,7 +423,7 @@ def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback,
             raise QgsProcessingException("No %s scenes found that match the selection criteria. "
                                                 "Adjust the selection parameters." % sensor)
         else:
-            print "No %s scenes found that match the selection criteria. Adjust the selection parameters." % sensor
+    #        print "No %s scenes found that match the selection criteria. Adjust the selection parameters." % sensor
             sys.exit(1)
 
     # CHECK START AND END DATES --------------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback,
             raise QgsProcessingException("No %s scenes found within the given time period. "
                                                 "Adjust the start and end date." % sensor)
         else:
-            print "No %s scenes found within the given time period. Adjust the start and end date." % sensor
+     #       print "No %s scenes found within the given time period. Adjust the start and end date." % sensor
             sys.exit(1)
 
     # GET EXTENT OF AOI -------------------------------------------------------------------------------------------
@@ -558,7 +558,8 @@ def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback,
                                                 "No %s scenes found that match the selection criteria." % sensor)
             sys.exit(1)
         else:
-            print "Invalid input data: No %s scenes found that match the selection criteria." % sensor
+            pass
+    #        print "Invalid input data: No %s scenes found that match the selection criteria." % sensor
 
     if not DEBUG:
         progress.setPercentage(10)
@@ -614,7 +615,8 @@ def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback,
                 if not DEBUG:
                     feedback.setProgressText("ERROR: %s" % e)
                 else:
-                    print e
+                    pass
+            #        print e
 
             if not DEBUG and index == "NDWI":
                 try:

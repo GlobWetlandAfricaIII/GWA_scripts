@@ -68,19 +68,19 @@ def fuse_watermasks(watermask_opt, watermask_opt_max, watermask_sar):
 
 # Directory containing watermasks
 if not os.path.exists(path_water_freq_sar):
-    print "Invalid input parameter: 'SAR based water frequency' file not found: %s" % path_water_freq_sar
+#    print "Invalid input parameter: 'SAR based water frequency' file not found: %s" % path_water_freq_sar
     raise QgsProcessingException("Invalid input parameter: 'SAR based water frequency' "
                                          "file not found %s" % path_water_freq_sar)
 
 # check if water frequency file exists
 if not os.path.exists(path_wet_freq_sar) and wetness_fusion:
-    print "Invalid input parameter: 'SAR based wetness frequency' file not found: %s" % path_wet_freq_sar
+#    print "Invalid input parameter: 'SAR based wetness frequency' file not found: %s" % path_wet_freq_sar
     raise QgsProcessingException("Invalid input parameter: 'SAR based wetness frequency' "
                                          "file not found %s" % path_wet_freq_sar)
 
 # check if wetness frequency file exists
 if not os.path.exists(path_masks_opt):
-    print "Invalid input parameter: 'Directory containing watermasks' not found: %s" % path_masks_opt
+#    print "Invalid input parameter: 'Directory containing watermasks' not found: %s" % path_masks_opt
     raise QgsProcessingException("Invalid input parameter: 'Directory containing watermasks' "
                                          "not found: %s" % path_masks_opt)
 

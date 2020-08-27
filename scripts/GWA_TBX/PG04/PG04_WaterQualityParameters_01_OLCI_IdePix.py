@@ -6,7 +6,7 @@ from qgis.processing import alg
 
 
 @alg(
-    name="pg04waterqualityparameter01olciidepix",
+    name="pg04waterqualityparameters01olciidepix",
     label=alg.tr("PG04_WaterQualityParameters_01_OLCI_IdePix"),
     group="bc",
     group_label=alg.tr("BC")
@@ -17,7 +17,7 @@ from qgis.processing import alg
 @alg.input(type=alg.BOOL, name="OutputCloudProbabilityFeatureValue", label="Write cloud probability feature value", default=False, advanced=True)
 @alg.output(type=alg.FILE, name='Input_folder', label='Input folder', behaviour=1)
 
-def pg04waterqualityparameter01olciidepix(instance, parameters, context, feedback, inputs):
+def pg04waterqualityparameters01olciidepix(instance, parameters, context, feedback, inputs):
     """
     Optical-SAR Water and Wetness Fusion
     """

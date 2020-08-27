@@ -47,7 +47,7 @@ if not DEBUG:
     
 
 out_dir = os.path.dirname(path_TWI)
-print out_dir
+print(out_dir)
 
 attrName = None
 attrVal = None

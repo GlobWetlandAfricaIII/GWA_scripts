@@ -289,12 +289,12 @@ if not os.path.exists(path_AOI):
 
 # Imagery
 if not os.path.exists(path_imagery):
-    print "Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery
+    #print "Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery
     raise QgsProcessingException("Invalid input parameter: 'Directory containing imagery' not found: %s" % path_imagery)
 
 # Output directory
 if not os.path.exists(pathOUT):
-    print "Invalid input parameter: 'Output directory' not found: %s" % path_imagery
+#    print "Invalid input parameter: 'Output directory' not found: %s" % path_imagery
     raise QgsProcessingException("Invalid input parameter: 'Output directory' not found: %s" % path_imagery)
 
 
@@ -323,7 +323,7 @@ if endDate_format < startDate_format:
 # Check scenes an start pre-processing ------------------------------------------------------------------------------------------------------------------------
 
 path_tmp_files = tempfile.mkdtemp()
-print path_tmp_files
+print(path_tmp_files)
 
 zips_filtered = getScenes4Period(startDate, endDate, path_imagery)
 
@@ -332,7 +332,7 @@ if len(zips_filtered) == 0:
         raise QgsProcessingException(
             "No scenes found within the given time period. Adjust the start and end date or download scenes for this time period.")
     else:
-        print "No Scenes found within the given time period. Adjust the start and end date or download scenes for this time period."
+    #    print "No Scenes found within the given time period. Adjust the start and end date or download scenes for this time period."
         sys.exit(1)
 
 # Snappy pre-processing

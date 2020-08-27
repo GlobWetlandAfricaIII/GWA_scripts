@@ -24,150 +24,168 @@ from PyQt4.QtGui import *
 from processing.core.ProcessingLog import ProcessingLog
 from processing.algs.grass.GrassUtils import GrassUtils
 from qgis.core import QgsProcessingException
+from qgis.processing import alg
 
+@alg(
+    name="grassrseriesforwholedirectory",
+    label=alg.tr("GRASS r.series for whole directory"),
+    group="notupdated",
+    group_label=alg.tr("Not Updated"),
+)
+@alg.input(
+    type=alg.FILE,
+    name="infile",
+    label="Infile",
+    behavior=0,
+    optional=False,
+    fileFilter="tif",
+)
+@alg.input(type=alg.FILE_DEST, name="outfile", label="Outfile")
+def maskforsentinel2forwetlandinventory(instance, parameters, context, feedback, inputs):
+    """ maskforsentinel2forwetlandinventory """
 
-def convertDatetoDoy(dateString, lengthYearString, lengthMonthString, lengthDayString):
-    try:
-        year = int(dateString[0:lengthYearString])
-    except:
-        year = 1
-    try:
-        month = int(dateString[lengthYearString:lengthYearString + lengthMonthString])
-    except:
-        month = 1
-    try:
-        day = int(dateString[lengthYearString + lengthMonthString:lengthYearString + lengthMonthString + lengthDayString])
-    except:
-        day = 1
-    
-    # If day string has a length of 3 it means that it already represents a doy    
-    if lengthDayString == 3:
-        doy = day
-    # Otherwise calculate doy
-    else:
-        doy = datetime.datetime(year = year, month = month, day = day) - datetime.datetime(year = year, month = 1, day = 1)
-        doy = doy.days + 1
-    
-    yearDoyStr = "%04d%03d" % (year, doy)
-    return yearDoyStr       
-
-def getFiles(dataDir, filenameFormat, outputFileFormat, groupFiles, outputFiles, groupBy):
-
-    # year-month
-    if groupBy == 0:
-        regex = '(Y{2,4}M{2})D{0,3}'
-    # year-month-day
-    elif groupBy == 1:
-        regex = '(Y{2,4}M{2}D{2,3})'
-    # month-day
-    elif groupBy == 2:
-        regex = 'Y{0,4}(M{2}D{2})'    
-    # year
-    elif groupBy == 3:
-        regex = '(Y{2,4})M{0,2}D{0,3}'
-    # month
-    elif groupBy == 4:
-        regex = 'Y{0,4}(M{2})D{0,3}'
-    # day
-    elif groupBy == 5:
-        regex = 'Y{0,4}M{0,2}(D{2,3})'
-    # decadal
-    elif groupBy == 6:
-        regex = '((Y{0,4})(M{0,2})(D{2,3}))'
-    # whole directory
-    elif groupBy == 7:
-        fileName, fileExtension = os.path.splitext(filenameFormat)
-        regex = '('+fileName+')'+fileExtension
-    else:
-        return
-    
-    # first find where the date string is located in the filename and construct a 
-    # regex to match it
-    match = re.search(regex, filenameFormat)
-    if not match:
-        ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No match for date string in filename format!")
-        raise QgsProcessingException("No match for date string in filename format!")
-    startDateString = match.start(1)
-    lengthDateString = match.end(1)-match.start(1)
-    # if grouping by format the regex has to be different to when grouping by date
-    if groupBy == 7:
-        dateRegex = fileExtension+"$"
-    else:
-        dateRegex = "(?<=^.{"+str(startDateString)+"})\d{"+str(lengthDateString)+"}" 
-    # then replace it with * to find all the files that match the filename format
-    matchingFormat = re.sub(regex, "*", filenameFormat)
-    
-    # For decadal grouping need to save the length of year, month and day strings
-    # to be able to convert the date to doy later on
-    if groupBy == 6:
-        lengthYearString = len(match.group(2))
-        lengthMonthString = len(match.group(3))
-        lengthDayString = len(match.group(4))
-    
-    # find all the matching files in the data dir
-    os.chdir(dataDir)
-    matchingFiles =  sorted(glob.glob(matchingFormat))
-    
-    # now group them according to the date
-    for filename in matchingFiles:
-        match = re.search(dateRegex,filename)
-        if not match:
-            continue
-        # If aggregation is by decade and the datestring doesn't specify DOY then DOY must be
-        # calculated so that the images can be grouped by year and last two digits of DOY
-        if groupBy == 6:
-            date = convertDatetoDoy(match.group(), lengthYearString, lengthMonthString, lengthDayString)
-            # need to subtract 1 and add 10 since decade 1 has days 1-10, decade 2 has days 11-20, etc. 
-            date = str(int(date)-1+10)[:-1]
-        else:
-            date = match.group()
-        if date in groupFiles:
-            groupFiles[date] += ";"+dataDir+os.sep+filename
-        else:
-            groupFiles[date] = dataDir+os.sep+filename             
-    # create an output filename for date
-    for date in groupFiles:
-        outputFile = re.sub('YMD', str(date), outputFileFormat)
-        outputFile = re.sub("\..{2,4}$", ".tif", outputFile) # make sure it's a tiff
-        outputFiles[date] = outputFile
+    def convertDatetoDoy(dateString, lengthYearString, lengthMonthString, lengthDayString):
+        try:
+            year = int(dateString[0:lengthYearString])
+        except:
+            year = 1
+        try:
+            month = int(dateString[lengthYearString:lengthYearString + lengthMonthString])
+        except:
+            month = 1
+        try:
+            day = int(dateString[lengthYearString + lengthMonthString:lengthYearString + lengthMonthString + lengthDayString])
+        except:
+            day = 1
         
-
-groupFiles = dict()
-outputFiles = dict()
-
-loglines = []
-loglines.append('GRASS r.series for whole directory script console output')
-loglines.append('')
-
-oldDir = os.getcwd()
-
-feedback.setProgressText("Looking for matching files.")
-getFiles(os.path.dirname(dataDir), filenameFormat, outputFileFormat, groupFiles, outputFiles, groupBy)
-
-os.chdir(oldDir)
-
-if len(groupFiles) == 0 or len(outputFiles) == 0:
-    ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No matching files found! r.series will not be executed.")
-    raise QgsProcessingException("No matching files found! r.series will not be executed.")
-else:
-    # run r.series for each group of files
-    GrassUtils.startGrassSession()
-    feedback.setProgressText("Starting GRASS r.series executions")
-    loglines.append("Starting GRASS r.series executions")
-    iteration = 1.0
-    for date in sorted(groupFiles.iterkeys()):
-        progress.setPercentage(int(iteration/float(len(groupFiles))*100))
-        feedback.setProgressText("Processing date string: "+date)
-        loglines.append("Processing date string: "+date)
-        params={'input':groupFiles[date], '-n':propagateNulls, 'method':operation, \
-                'range':range, 'GRASS_REGION_CELLSIZE_PARAMETER':cellSize, 'GRASS_REGION_PARAMETER':extent, 'output':outputDir+os.sep+outputFiles[date]}
-        if processing.runalg("grass7:r.series",params):
-            iteration +=1
+        # If day string has a length of 3 it means that it already represents a doy    
+        if lengthDayString == 3:
+            doy = day
+        # Otherwise calculate doy
         else:
-            GrassUtils.endGrassSession()
-            raise QgsProcessingException("Unable to execute script \"GRASS r.series for whole directory\". Check Processing log for details.")
-    feedback.setProgressText("Finished!")
-    loglines.append("Finished!")
-    GrassUtils.endGrassSession()
-    
-ProcessingLog.addToLog(ProcessingLog.LOG_INFO, loglines)
+            doy = datetime.datetime(year = year, month = month, day = day) - datetime.datetime(year = year, month = 1, day = 1)
+            doy = doy.days + 1
+        
+        yearDoyStr = "%04d%03d" % (year, doy)
+        return yearDoyStr       
+
+    def getFiles(dataDir, filenameFormat, outputFileFormat, groupFiles, outputFiles, groupBy):
+
+        # year-month
+        if groupBy == 0:
+            regex = '(Y{2,4}M{2})D{0,3}'
+        # year-month-day
+        elif groupBy == 1:
+            regex = '(Y{2,4}M{2}D{2,3})'
+        # month-day
+        elif groupBy == 2:
+            regex = 'Y{0,4}(M{2}D{2})'    
+        # year
+        elif groupBy == 3:
+            regex = '(Y{2,4})M{0,2}D{0,3}'
+        # month
+        elif groupBy == 4:
+            regex = 'Y{0,4}(M{2})D{0,3}'
+        # day
+        elif groupBy == 5:
+            regex = 'Y{0,4}M{0,2}(D{2,3})'
+        # decadal
+        elif groupBy == 6:
+            regex = '((Y{0,4})(M{0,2})(D{2,3}))'
+        # whole directory
+        elif groupBy == 7:
+            fileName, fileExtension = os.path.splitext(filenameFormat)
+            regex = '('+fileName+')'+fileExtension
+        else:
+            return
+        
+        # first find where the date string is located in the filename and construct a 
+        # regex to match it
+        match = re.search(regex, filenameFormat)
+        if not match:
+            ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No match for date string in filename format!")
+            raise QgsProcessingException("No match for date string in filename format!")
+        startDateString = match.start(1)
+        lengthDateString = match.end(1)-match.start(1)
+        # if grouping by format the regex has to be different to when grouping by date
+        if groupBy == 7:
+            dateRegex = fileExtension+"$"
+        else:
+            dateRegex = "(?<=^.{"+str(startDateString)+"})\d{"+str(lengthDateString)+"}" 
+        # then replace it with * to find all the files that match the filename format
+        matchingFormat = re.sub(regex, "*", filenameFormat)
+        
+        # For decadal grouping need to save the length of year, month and day strings
+        # to be able to convert the date to doy later on
+        if groupBy == 6:
+            lengthYearString = len(match.group(2))
+            lengthMonthString = len(match.group(3))
+            lengthDayString = len(match.group(4))
+        
+        # find all the matching files in the data dir
+        os.chdir(dataDir)
+        matchingFiles =  sorted(glob.glob(matchingFormat))
+        
+        # now group them according to the date
+        for filename in matchingFiles:
+            match = re.search(dateRegex,filename)
+            if not match:
+                continue
+            # If aggregation is by decade and the datestring doesn't specify DOY then DOY must be
+            # calculated so that the images can be grouped by year and last two digits of DOY
+            if groupBy == 6:
+                date = convertDatetoDoy(match.group(), lengthYearString, lengthMonthString, lengthDayString)
+                # need to subtract 1 and add 10 since decade 1 has days 1-10, decade 2 has days 11-20, etc. 
+                date = str(int(date)-1+10)[:-1]
+            else:
+                date = match.group()
+            if date in groupFiles:
+                groupFiles[date] += ";"+dataDir+os.sep+filename
+            else:
+                groupFiles[date] = dataDir+os.sep+filename             
+        # create an output filename for date
+        for date in groupFiles:
+            outputFile = re.sub('YMD', str(date), outputFileFormat)
+            outputFile = re.sub("\..{2,4}$", ".tif", outputFile) # make sure it's a tiff
+            outputFiles[date] = outputFile
+            
+
+    groupFiles = dict()
+    outputFiles = dict()
+
+    loglines = []
+    loglines.append('GRASS r.series for whole directory script console output')
+    loglines.append('')
+
+    oldDir = os.getcwd()
+
+    feedback.setProgressText("Looking for matching files.")
+    getFiles(os.path.dirname(dataDir), filenameFormat, outputFileFormat, groupFiles, outputFiles, groupBy)
+
+    os.chdir(oldDir)
+
+    if len(groupFiles) == 0 or len(outputFiles) == 0:
+        ProcessingLog.addToLog(ProcessingLog.LOG_INFO, "No matching files found! r.series will not be executed.")
+        raise QgsProcessingException("No matching files found! r.series will not be executed.")
+    else:
+        # run r.series for each group of files
+        GrassUtils.startGrassSession()
+        feedback.setProgressText("Starting GRASS r.series executions")
+        loglines.append("Starting GRASS r.series executions")
+        iteration = 1.0
+        for date in sorted(groupFiles.iterkeys()):
+            progress.setPercentage(int(iteration/float(len(groupFiles))*100))
+            feedback.setProgressText("Processing date string: "+date)
+            loglines.append("Processing date string: "+date)
+            params={'input':groupFiles[date], '-n':propagateNulls, 'method':operation, \
+                    'range':range, 'GRASS_REGION_CELLSIZE_PARAMETER':cellSize, 'GRASS_REGION_PARAMETER':extent, 'output':outputDir+os.sep+outputFiles[date]}
+            if processing.runalg("grass7:r.series",params):
+                iteration +=1
+            else:
+                GrassUtils.endGrassSession()
+                raise QgsProcessingException("Unable to execute script \"GRASS r.series for whole directory\". Check Processing log for details.")
+        feedback.setProgressText("Finished!")
+        loglines.append("Finished!")
+        GrassUtils.endGrassSession()
+        
+    ProcessingLog.addToLog(ProcessingLog.LOG_INFO, loglines)

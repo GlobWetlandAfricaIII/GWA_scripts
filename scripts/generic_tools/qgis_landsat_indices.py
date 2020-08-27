@@ -6,7 +6,7 @@ from qgis.processing import alg
 from processing.tools import dataobjects
 
 @alg(
-    name="landsatindicies",
+    name="landsatindices",
     label=alg.tr("Landsat Indices"),
     group="landsattools",
     group_label=alg.tr("Landsat Tools"),
