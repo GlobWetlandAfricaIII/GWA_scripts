@@ -31,7 +31,7 @@ def fmasklandsat(instance, parameters, context, feedback, inputs):
 
     def standard_index(band1, band2):
         """Function for standard index calculation"""
-        with np.seterr(divide='warn'):
+        with np.errstate(divide='warn'):
             idx = (band1 - band2) / (band1 + band2) * 10000
         return idx
 
