@@ -1,6 +1,3 @@
-[submodule "scripts/GWA_TBX/budyko_qgis"]
-	path = scripts/budyko-qgis
-	url = https://github.com/DHI-GRAS/budyko_qgis.git
 [submodule "qgis-sentinel-scripts"]
 	path = scripts/qgis-sentinel-scripts
 	url = https://github.com/DHI-GRAS/qgis-sentinel-scripts
