@@ -1,9 +1,6 @@
 [submodule "qgis-sentinel-scripts"]
 	path = scripts/qgis-sentinel-scripts
 	url = https://github.com/DHI-GRAS/qgis-sentinel-scripts
-[submodule "sentinelsat-qgis-script"]
-	path = scripts/sentinelsat-qgis-script
-	url = https://github.com/sentinelsat/sentinelsat-qgis-script
 [submodule "qgis-python-fmask"]
 	path = scripts/qgis-python-fmask
 	url = https://github.com/DHI-GRAS/qgis-python-fmask
