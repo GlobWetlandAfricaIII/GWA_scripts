@@ -24,10 +24,10 @@ def reproject_raster_and_vector(instance, parameters, context, feedback, inputs)
 
     feedback.setProgressText("Reprojecting raster...")
     params = {'INPUT': parameters['inputRaster'],
-            'TARGET_CRS': parameters['projection'],
-            'OUTPUT': parameters['outputRaster']}
+              'TARGET_CRS': parameters['projection'],
+              'OUTPUT': parameters['outputRaster']}
     raster_result = processing.run("gdal:warpreproject", params, is_child_algorithm=True,
                                    context=context, feedback=feedback)
-    
+
     return {'OUTPUT_RASTER': raster_result['OUTPUT'],
             'OUTPUT_VECTOR': vector_result['OUTPUT']}
